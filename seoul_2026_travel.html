@@ -2193,11 +2193,13 @@ function openNaverNext(event, el){
     window.location.href = deep;
   }catch(e){}
 
-  // Some HTML viewers / browsers block custom schemes. In that case
-  // fall back to NAVER web search after a short delay.
+  // If the Naver app does not open (for example, it is not installed),
+  // use same-tab navigation. iOS Safari can block a delayed window.open().
+  // Keeping this in the current tab makes the fallback reliable on iOS while
+  // Android still opens the app normally when it handles the custom scheme.
   setTimeout(()=>{
     if(!leftPage && document.visibilityState === 'visible'){
-      window.open(fallback, '_blank');
+      window.location.assign(fallback);
     }
   }, 1100);
 

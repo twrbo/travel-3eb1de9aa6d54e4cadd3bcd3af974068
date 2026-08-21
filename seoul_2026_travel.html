@@ -1,0 +1,2480 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090b10">
+<title>首爾 2026｜8/22–8/26 連線地圖版 v29</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root {
+  --bg:#090b10; --panel:#11151d; --panel2:#171c26; --line:#28303c;
+  --text:#f5f7fa; --muted:#9aa4b2; --soft:#cfd6df;
+  --gold:#f2c94c; --gold2:#8e6d13; --gold-bg:#211c0c;
+  --blue:#5aa7ff; --green:#47d16c; --arex:#39b9ef; --sb:#f3aa33;
+  --danger:#ff6b6b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.55}
+a{color:inherit}
+.shell{max-width:980px;margin:auto;padding:0 14px 80px}
+.flightbar{position:sticky;top:0;z-index:100;background:rgba(9,11,16,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);margin:0 -14px;padding:9px 14px 8px;display:flex;gap:9px;overflow:auto;scrollbar-width:none}
+.flightbar::-webkit-scrollbar{display:none}
+.flight{min-width:330px;flex:1;background:#121722;border:1px solid #303847;border-radius:16px;padding:10px 12px}
+.flight-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.flight-no{font-size:13px;font-weight:650;letter-spacing:.03em}
+.flight-date{font-size:11px;color:var(--muted)}
+.flight-route{display:grid;grid-template-columns:1fr auto 1fr;gap:9px;align-items:center;margin-top:7px}
+.airport b{display:block;font-size:19px;line-height:1.1;font-weight:600} .airport span{font-size:11px;color:var(--muted)}
+.airport.right{text-align:right}
+.plane{font-size:18px;color:var(--gold)}
+.terminal{display:inline-block;font-style:normal;margin-top:5px;border:1px solid #35baf6;background:#0c3850;color:#dcf5ff;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:600;font-style:normal;letter-spacing:.02em;box-shadow:0 0 0 1px rgba(53,186,246,.12),0 0 14px rgba(53,186,246,.10)}
+.hero{padding:24px 5px 14px}
+.hero h1{font-size:29px;line-height:1.16;margin:0 0 7px}
+.hero p{margin:0;color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.legend span{font-size:11px;border:1px solid var(--line);background:#121722;border-radius:999px;padding:5px 8px;color:var(--soft)}
+.legend .mine{border-color:#806814;background:var(--gold-bg);color:#ffe582;font-weight:850}
+.tabs{position:sticky;top:0;z-index:90;margin:0 -14px 14px;padding:8px 14px;background:rgba(9,11,16,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);overflow:auto;white-space:nowrap;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:1px solid var(--line);background:#121722;color:#b7c0cd;border-radius:999px;padding:8px 12px;margin-right:5px;font-weight:850}
+.tab.active{background:#edf2f7;color:#0b0e13;border-color:#edf2f7}
+.panel{display:none} .panel.active{display:block}
+.dayhead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:22px 2px 10px}
+.dayhead h2{font-size:24px;margin:0} .dayhead p{font-size:12px;color:var(--muted);margin:0;text-align:right}
+.card,.map-card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:15px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.card.preferred,.meal.preferred{background:linear-gradient(180deg,#201b0c,#17150e);border:1.5px solid #8f7317}
+.card h3,.map-card h3{margin:0 0 3px;font-size:18px}
+.time{font-size:12px;color:#c9d1dc;font-weight:900;margin-bottom:6px}
+.ko{font-size:13px;color:#c8d0db} .addr,.small{font-size:12px;color:var(--muted)}
+.note{margin-top:9px;padding:10px 11px;border-radius:12px;background:#0d1118;border:1px solid #202733;color:#cbd3df;font-size:12px}
+.note.good{border-color:#245437;background:#0d1c14} .note.warn{border-color:#6e5321;background:#20190d}
+.badge{display:inline-block;padding:3px 7px;border-radius:999px;margin-right:7px;font-size:10px;font-weight:900;vertical-align:2px}
+.badge.mine{background:var(--gold);color:#2b2200}
+.badge.alt{background:#27303d;color:#c6cfda}
+.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px} .actions.compact{margin-top:8px}
+.btn{appearance:none;border:1px solid #3a4453;background:#171d27;color:#e8edf4;border-radius:10px;padding:7px 10px;text-decoration:none;font-size:11px;font-weight:850;cursor:pointer}
+.btn.primary{background:#e9eef5;color:#0b0e13;border-color:#e9eef5} .btn.routebtn{white-space:nowrap;background:#1d2838;border-color:#3b5677;color:#bcd9ff}
+.transit{background:var(--panel);border:1px solid var(--line);border-left:4px solid #596579;border-radius:15px;padding:12px 13px;margin:9px 0}
+.transit-title{font-size:13px;font-weight:650;margin-bottom:8px}
+.transit-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
+.arrow{color:#8f9baa;font-weight:500}
+.station{display:inline-flex;align-items:center;gap:6px;color:white;border-radius:11px;padding:5px 8px;font-size:11px;font-weight:800}
+.station>b{font-size:15px;padding-right:7px;border-right:1px solid rgba(255,255,255,.35)} .station span{line-height:1.08} .station small{display:block;font-size:9px;opacity:.83;margin-top:2px}
+.line1{background:#0052a4} .line2{background:#00a84d} .arex{background:#008fc5} .sb{background:#dc8d00;color:#171006} .sb>b{border-color:rgba(0,0,0,.22)}
+.meal-section{margin:18px 0} .meal-section>h3{font-size:17px;margin:0 2px 8px}
+.meal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.meal{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:12px;min-height:147px}
+.meal-name{font-size:13px;line-height:1.35;min-height:40px} .meal-note{font-size:12px;color:var(--muted);margin-top:7px}
+.map-card{padding:13px}
+.map-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.map-head h3{font-size:16px}
+.eyebrow{font-size:9px;letter-spacing:.14em;color:#6db5ff;font-weight:900}
+.day-map{height:390px;border-radius:14px;overflow:hidden;border:1px solid #2d3745;background:#0d1117}
+.map-note{font-size:11px;color:#8e99a8;margin-top:8px}
+.leaflet-container{font-family:inherit;background:#0d1117}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#161c25;color:#f3f5f7}
+.leaflet-popup-content{margin:10px 12px;font-size:12px}
+.route-marker{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#d7dee8;color:#0b0e13;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.55);font-size:12px;font-weight:950}
+.route-marker.mine{background:var(--gold);border-color:#fff2a9}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px} .stat b{font-size:20px;display:block} .stat span{font-size:11px;color:var(--muted)}
+.section-title{font-size:18px;margin:23px 2px 8px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:11px 13px;margin:7px 0} summary{font-weight:850;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(18px);background:#edf2f7;color:#0b0e13;padding:9px 13px;border-radius:999px;font-size:12px;font-weight:850;opacity:0;transition:.18s;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:700px){
+  .flight{min-width:300px}
+  .tabs{top:0}
+  .meal-grid{grid-template-columns:1fr}
+  .meal{min-height:0}
+  .overview-grid{grid-template-columns:1fr 1fr}
+  .day-map{height:360px}
+  .map-head{align-items:flex-start;flex-direction:column}
+  .hero h1{font-size:25px}
+}
+@media(max-width:430px){
+  .flightbar{padding-left:10px;padding-right:10px}
+  .flight{min-width:292px}
+  .tabs{top:0}
+  .day-map{height:330px}
+}
+
+/* Category colors: restaurant = warm red/orange, shopping = cool teal/blue. */
+.card.food,.meal.food,.meal{
+  background:linear-gradient(180deg,#201417,#171216);
+  border-color:#61333b;
+}
+.card.shop{
+  background:linear-gradient(180deg,#0d2025,#0d171c);
+  border-color:#276775;
+}
+.card.food.preferred,.meal.food.preferred,.meal.preferred{
+  background:linear-gradient(180deg,#2a1716,#1b1211);
+  border:1.5px solid #b6683f;
+  box-shadow:0 8px 24px rgba(130,55,31,.12);
+}
+.card.shop.preferred{
+  background:linear-gradient(180deg,#10282c,#0b191d);
+  border:1.5px solid #3d91a1;
+  box-shadow:0 8px 24px rgba(29,111,130,.11);
+}
+.badge.foodtag{background:#71363c;color:#ffd8d4}
+.badge.shoptag{background:#175d6a;color:#d4f7ff}
+.card.food .note{border-color:#40262a}
+.card.shop .note{border-color:#1e454d}
+.category-legend{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 14px}
+.category-legend span{font-size:11px;padding:5px 9px;border-radius:999px;border:1px solid}
+.category-legend .food-key{background:#201417;border-color:#61333b;color:#ffc2b5}
+.category-legend .shop-key{background:#0d2025;border-color:#276775;color:#bfefff}
+.quick-hotels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick-hotel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px}
+.quick-hotel h4{margin:0 0 3px;font-size:15px}
+.quick-hotel .stay{font-size:11px;color:#74c9ff;font-weight:900;margin-bottom:5px}
+.overview-flights{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.overview-flights .flight{min-width:0}
+@media(max-width:700px){
+  .quick-hotels,.overview-flights{grid-template-columns:1fr}
+}
+
+
+.triptime{
+  display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;padding-top:10px;
+  border-top:1px solid #2a3340;
+}
+.triptime span{
+  display:inline-flex;align-items:center;gap:5px;
+  border:1px solid #344050;background:#0d1219;color:#cbd5e1;
+  border-radius:999px;padding:5px 8px;font-size:11px;font-weight:500;
+}
+.triptime .total{
+  border-color:#3b6e8b;background:#0d1d28;color:#cbeeff;
+}
+.triptime small{
+  width:100%;color:#7f8a99;font-size:10px;margin-top:1px;
+}
+
+
+.copy-modal{
+  position:fixed;inset:0;z-index:2000;display:none;
+  align-items:center;justify-content:center;padding:20px;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(8px);
+}
+.copy-modal.show{display:flex}
+.copy-dialog{
+  width:min(520px,100%);background:#151a23;border:1px solid #343e4c;
+  border-radius:18px;padding:16px;box-shadow:0 24px 70px rgba(0,0,0,.5);
+}
+.copy-dialog h3{margin:0 0 7px;font-size:17px}
+.copy-dialog p{margin:0 0 10px;color:#9aa4b2;font-size:12px}
+.copy-field{
+  width:100%;min-height:82px;resize:none;background:#0b0f15;color:#f6f8fa;
+  border:1px solid #3a4657;border-radius:12px;padding:11px 12px;
+  font:500 15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Noto Sans TC",sans-serif;
+}
+.copy-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:11px}
+.btn.copy-ok{background:#d8f2ff;color:#07131a;border-color:#8bd9ff}
+
+
+.store-info{display:grid;gap:6px;margin-top:9px}
+.info-row{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:7px 9px;border-radius:10px;
+  background:#0c1118;border:1px solid #252e3a;
+  font-size:11px;line-height:1.45;color:#d5dce5;
+}
+.info-row .info-label{
+  flex:0 0 auto;min-width:38px;
+  font-size:10px;font-weight:650;letter-spacing:.02em;
+  color:#8ed8ff;
+}
+.info-row.reco{border-color:#493c18;background:#17140b}
+.info-row.reco .info-label{color:#f3cf64}
+.info-row.warn{border-color:#67483a;background:#1d1411;color:#ffd0c1}
+.info-row.warn .info-label{color:#ff9f82}
+.data-stamp{font-size:10px;color:#778292;margin-top:8px}
+
+
+.overview-flights .airport{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.overview-flights .airport:first-child{
+  align-items:flex-start;
+}
+.overview-flights .airport.right{
+  align-items:flex-end;
+  text-align:right;
+}
+.overview-flights .terminal{
+  margin-top:6px;
+}
+
+
+a.station{
+  text-decoration:none;
+  cursor:pointer;
+  transition:filter .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+a.station:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px);
+}
+a.station:focus-visible{
+  outline:2px solid #d9f2ff;
+  outline-offset:2px;
+}
+
+
+/* Destination-first transit cards */
+.transit-purpose{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1.35fr);
+  gap:8px;
+  align-items:center;
+  margin-bottom:11px;
+  padding:10px 11px;
+  border:1px solid #344151;
+  border-radius:12px;
+  background:#0c1118;
+}
+.transit-purpose .ctx{
+  min-width:0;
+}
+.transit-purpose .ctx-label{
+  display:block;
+  color:#7e8998;
+  font-size:9px;
+  letter-spacing:.08em;
+  margin-bottom:2px;
+}
+.transit-purpose .ctx-main{
+  display:block;
+  color:#d7dde6;
+  font-size:12px;
+  font-weight:500;
+  line-height:1.35;
+}
+.transit-purpose .ctx-dest .ctx-main{
+  color:#f4f7fa;
+  font-size:14px;
+  font-weight:600;
+}
+.transit-purpose .ctx-sub{
+  display:block;
+  color:#91a0b2;
+  font-size:10px;
+  margin-top:2px;
+  line-height:1.35;
+}
+.transit-purpose .ctx-arrow{
+  color:#6d7b8d;
+  font-size:18px;
+  font-weight:400;
+}
+.transit-purpose.shop{
+  border-color:#266170;
+  background:#0d1b20;
+}
+.transit-purpose.shop .ctx-dest .ctx-main{color:#c8f3fb}
+.transit-purpose.food{
+  border-color:#684047;
+  background:#1b1114;
+}
+.transit-purpose.food .ctx-dest .ctx-main{color:#ffd1c8}
+.transit-purpose.stay{
+  border-color:#554b78;
+  background:#151321;
+}
+.transit-purpose.stay .ctx-dest .ctx-main{color:#ded7ff}
+.transit-purpose.flight{
+  border-color:#2e6280;
+  background:#0c1922;
+}
+.transit-purpose.flight .ctx-dest .ctx-main{color:#d2efff}
+.transit-title{
+  font-weight:500 !important;
+  color:#aeb8c5;
+}
+.walk-note{
+  margin:9px 0 11px;
+  padding:9px 11px;
+  border-radius:11px;
+  border:1px dashed #31505e;
+  background:#0d171c;
+  color:#a9cbd5;
+  font-size:11px;
+  line-height:1.5;
+}
+.walk-note strong{
+  color:#d6f5fb;
+  font-weight:600;
+}
+@media(max-width:600px){
+  .transit-purpose{
+    grid-template-columns:1fr;
+    gap:5px;
+  }
+  .transit-purpose .ctx-arrow{
+    transform:rotate(90deg);
+    line-height:1;
+    padding-left:2px;
+  }
+}
+
+
+.shop-detail{
+  display:grid;
+  gap:6px;
+  margin-top:9px;
+}
+.shop-detail .shop-row{
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  gap:8px;
+  align-items:start;
+  padding:8px 9px;
+  border:1px solid #244852;
+  background:#0b181c;
+  border-radius:10px;
+  font-size:11px;
+  line-height:1.5;
+  color:#cce4ea;
+}
+.shop-detail .shop-label{
+  color:#79d7e7;
+  font-size:10px;
+  font-weight:600;
+}
+.shop-detail .popular{
+  border-color:#4f441c;
+  background:#181509;
+  color:#e8ddb7;
+}
+.shop-detail .popular .shop-label{color:#f2cd61}
+
+
+/* Mobile: 3-choice restaurants become horizontal swipe cards */
+.meal-section{
+  position:relative;
+}
+.swipe-hint{
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin:-2px 2px 8px;
+  color:#7f8b9b;
+  font-size:10px;
+}
+.swipe-hint strong{
+  color:#b9c4d2;
+  font-weight:500;
+}
+@media(max-width:700px){
+  .swipe-hint{display:flex}
+  .meal-grid{
+    display:flex !important;
+    gap:10px;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    scroll-padding-left:2px;
+    -webkit-overflow-scrolling:touch;
+    padding:1px 2px 10px;
+    margin-left:-2px;
+    margin-right:-2px;
+    scrollbar-width:none;
+  }
+  .meal-grid::-webkit-scrollbar{display:none}
+  .meal{
+    flex:0 0 min(84vw,360px);
+    min-width:0;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
+  }
+  .meal-grid::after{
+    content:"";
+    flex:0 0 3px;
+  }
+}
+
+
+a.ctx-dest{
+  text-decoration:none;
+  color:inherit;
+  border-radius:9px;
+  padding:6px 8px;
+  margin:-6px -8px;
+  transition:background .15s ease, box-shadow .15s ease;
+  cursor:pointer;
+}
+a.ctx-dest:hover{
+  background:rgba(255,255,255,.045);
+}
+a.ctx-dest:focus-visible{
+  outline:2px solid #9edfff;
+  outline-offset:2px;
+}
+.next-nav{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  margin-top:5px;
+  padding:3px 6px;
+  border:1px solid #315b70;
+  border-radius:999px;
+  color:#94dfff;
+  font-size:9px;
+  line-height:1.2;
+}
+.transit-purpose.shop .next-nav{border-color:#277082;color:#9beaf7}
+.transit-purpose.food .next-nav{border-color:#71434b;color:#ffb8aa}
+.transit-purpose.stay .next-nav{border-color:#66598a;color:#c9bdff}
+.transit-purpose.flight .next-nav{border-color:#356e91;color:#a9e2ff}
+
+
+.hero{padding:20px 5px 12px}
+.hero h1{font-size:26px;line-height:1.25;margin:0}
+@media(max-width:520px){
+  .hero h1{font-size:21px;line-height:1.32}
+}
+
+
+.route-marker{
+  background:#9aa4b2 !important;
+  color:#0b0e13 !important;
+  border-color:#eef2f7 !important;
+}
+.route-marker.food{
+  background:#e98a3a !important;
+  color:#fff !important;
+  border-color:#ffe0c2 !important;
+}
+.route-marker.shop{
+  background:#3b9ed8 !important;
+  color:#fff !important;
+  border-color:#cbeeff !important;
+}
+.route-marker.mine{
+  background:#9aa4b2 !important;
+  color:#0b0e13 !important;
+  border-color:#eef2f7 !important;
+}
+
+
+/* v14 mobile-first hardening for iOS Safari / Android Chrome & WebView */
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+body{
+  padding-bottom:env(safe-area-inset-bottom);
+  overscroll-behavior-y:none;
+}
+.shell{
+  padding-left:max(14px,env(safe-area-inset-left));
+  padding-right:max(14px,env(safe-area-inset-right));
+}
+.tabs{
+  padding-left:max(14px,env(safe-area-inset-left));
+  padding-right:max(14px,env(safe-area-inset-right));
+}
+.btn{
+  min-height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+.station{
+  min-height:40px;
+}
+.ctx-main,.ctx-sub,.meal-name,.meal-note,.shop-row span,.info-row span{
+  overflow-wrap:anywhere;
+}
+
+/* Avoid arrow/string overflow on narrow phones. */
+.swipe-hint{
+  min-width:0;
+}
+.swipe-hint > span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+}
+.swipe-hint > span::before{
+  content:"‹";
+  font-size:17px;
+  line-height:1;
+  color:#a9b4c3;
+}
+.swipe-hint > span::after{
+  content:"›";
+  font-size:17px;
+  line-height:1;
+  color:#a9b4c3;
+}
+
+@media(max-width:700px){
+  .swipe-hint{
+    width:100%;
+    justify-content:space-between;
+    gap:10px;
+    overflow:hidden;
+  }
+  .swipe-hint strong{
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  .swipe-hint > span{
+    flex:0 0 auto;
+    max-width:58%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .meal-grid{
+    touch-action:pan-x;
+    scroll-padding-inline:2px;
+    padding-bottom:12px;
+  }
+  .meal{
+    flex:0 0 min(calc(100vw - 44px),380px) !important;
+    width:min(calc(100vw - 44px),380px);
+    max-width:calc(100vw - 44px);
+  }
+
+  .transit-purpose{
+    grid-template-columns:1fr !important;
+    gap:7px !important;
+  }
+  .transit-purpose .ctx-arrow{
+    transform:none !important;
+    width:100%;
+    height:18px;
+    padding:0 !important;
+    font-size:0 !important;
+    text-align:center;
+    line-height:18px !important;
+  }
+  .transit-purpose .ctx-arrow::before{
+    content:"↓";
+    font-size:16px;
+    color:#748294;
+  }
+  a.ctx-dest{
+    margin:0 !important;
+    padding:9px 10px !important;
+  }
+  .next-nav{
+    min-height:28px;
+    padding:5px 8px;
+    font-size:10px;
+  }
+
+  .actions{
+    gap:8px;
+  }
+  .actions .btn{
+    flex:1 1 110px;
+    min-width:0;
+  }
+
+  .map-head{
+    width:100%;
+  }
+  .map-head .routebtn{
+    width:100%;
+  }
+  .day-map{
+    height:min(72vh,390px);
+    min-height:300px;
+  }
+}
+
+@media(max-width:390px){
+  .hero h1{
+    font-size:19px !important;
+  }
+  .legend{
+    gap:5px;
+  }
+  .legend span{
+    font-size:10px;
+    padding:4px 7px;
+  }
+  .meal{
+    flex-basis:calc(100vw - 36px) !important;
+    width:calc(100vw - 36px);
+    max-width:calc(100vw - 36px);
+  }
+  .transit,.card,.map-card{
+    padding:12px;
+  }
+}
+
+/* Map labels can now be 4-1 / 4-2 / 4-3. */
+.route-marker{
+  width:auto !important;
+  min-width:34px;
+  height:34px !important;
+  padding:0 6px;
+  border-radius:999px !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  white-space:nowrap;
+}
+.route-marker.food.candidate{
+  background:#e98a3a !important;
+  color:#fff !important;
+  border-color:#ffe0c2 !important;
+  box-shadow:0 2px 12px rgba(233,138,58,.34);
+}
+
+
+.hero-subtitle{
+  margin-top:5px;
+  color:#8e98a7;
+  font-size:12px;
+  font-weight:400;
+  letter-spacing:.01em;
+}
+@media(max-width:520px){
+  .hero-subtitle{
+    font-size:11px;
+    margin-top:4px;
+  }
+}
+
+
+/* v17 transit UX: destination-first, less cognitive load */
+.transit{
+  padding:13px 14px;
+}
+.transit-go{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+  padding:11px 12px;
+  border-radius:13px;
+  border:1px solid #344252;
+  background:#0c1118;
+}
+.transit-go-main{
+  min-width:0;
+}
+.transit-go-label{
+  display:block;
+  font-size:9px;
+  letter-spacing:.1em;
+  color:#778495;
+  margin-bottom:2px;
+}
+.transit-go-dest{
+  display:block;
+  font-size:15px;
+  line-height:1.3;
+  font-weight:650;
+  color:#f5f7fa;
+  overflow-wrap:anywhere;
+}
+.transit-go-sub{
+  display:block;
+  margin-top:3px;
+  font-size:10px;
+  line-height:1.4;
+  color:#94a0af;
+}
+.transit-go.shop{border-color:#266579;background:#0c1a20}
+.transit-go.shop .transit-go-dest{color:#c8f1ff}
+.transit-go.food{border-color:#73414a;background:#1b1114}
+.transit-go.food .transit-go-dest{color:#ffd2c9}
+.transit-go.stay{border-color:#5f5482;background:#151321}
+.transit-go.stay .transit-go-dest{color:#dfd9ff}
+.transit-go.flight{border-color:#316985;background:#0c1922}
+.transit-go.flight .transit-go-dest{color:#d2efff}
+
+.transit-go .next-nav{
+  flex:0 0 auto;
+  min-height:40px;
+  padding:8px 10px;
+  margin:0;
+  text-decoration:none;
+  justify-content:center;
+}
+
+.route-label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin:0 0 8px;
+  color:#94a0af;
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:.04em;
+}
+.route-label::before{
+  content:"";
+  width:16px;
+  height:1px;
+  background:#536071;
+}
+
+/* Make the actual line more prominent than explanatory labels. */
+.transit-row{
+  padding:9px 0 2px;
+  gap:7px;
+}
+.transit-row .arrow{
+  color:#6f7c8d;
+  font-size:11px;
+  font-weight:400 !important;
+}
+
+/* Time is summarized in one compact strip. */
+.triptime{
+  margin-top:11px;
+  padding-top:10px;
+  gap:6px;
+}
+.triptime span{
+  font-size:10px;
+  padding:5px 8px;
+  font-weight:500;
+}
+.triptime .total{
+  order:-1;
+  font-size:11px;
+  font-weight:650;
+}
+
+/* Old purpose component is no longer displayed after conversion. */
+.transit-purpose{display:none !important}
+
+@media(max-width:700px){
+  .transit{
+    padding:12px;
+  }
+  .transit-go{
+    align-items:stretch;
+    flex-direction:column;
+    gap:9px;
+  }
+  .transit-go .next-nav{
+    width:100%;
+    min-height:42px;
+  }
+  .transit-row{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr);
+    align-items:stretch;
+    gap:5px !important;
+  }
+  .transit-row .station{
+    width:100%;
+    justify-content:flex-start;
+    min-height:44px;
+    border-radius:11px;
+  }
+  .transit-row .arrow{
+    width:100%;
+    text-align:center;
+    min-height:18px;
+    line-height:18px;
+    font-size:0;
+  }
+  .transit-row .arrow::after{
+    content:"↓";
+    font-size:15px;
+    color:#748294;
+  }
+  .triptime{
+    display:grid !important;
+    grid-template-columns:1fr 1fr;
+  }
+  .triptime .total{
+    grid-column:1/-1;
+    width:100%;
+    justify-content:center;
+  }
+  .triptime small{
+    grid-column:1/-1;
+  }
+}
+
+@media(max-width:390px){
+  .triptime{
+    grid-template-columns:1fr;
+  }
+  .triptime .total,
+  .triptime small{
+    grid-column:1;
+  }
+}
+
+
+.route-marker.hotel{
+  width:38px !important;
+  min-width:38px !important;
+  height:38px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  background:#7559c7 !important;
+  color:#fff !important;
+  border-color:#d9cffc !important;
+  font-size:17px !important;
+  box-shadow:0 2px 14px rgba(117,89,199,.38);
+}
+.route-marker.hotel .house{
+  transform:translateY(-1px);
+}
+
+
+.booking-info{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin-top:9px;
+  padding:9px 10px;
+  border:1px solid #3a4452;
+  border-radius:11px;
+  background:#0d1218;
+}
+.booking-id{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  color:#dbe2ea;
+}
+.booking-id b{
+  color:#fff;
+  font-size:12px;
+  font-weight:650;
+}
+.booking-mail{
+  margin-left:auto;
+  text-decoration:none;
+  color:#a9e1ff;
+  border:1px solid #37647d;
+  background:#0d1d27;
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:10px;
+  font-weight:600;
+  white-space:nowrap;
+}
+@media(max-width:560px){
+  .booking-info{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .booking-mail{
+    margin-left:0;
+    width:100%;
+    text-align:center;
+    min-height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+}
+
+
+/* v21: transit blocks use green only as the outer visual accent.
+   Inner station chips keep their original line colors. */
+.transit{
+  border-color:#2f7a4a !important;
+  box-shadow:0 10px 35px rgba(0,0,0,.28), inset 3px 0 0 #3f9b63 !important;
+}
+.transit .route-label{
+  color:#9bc8aa !important;
+}
+.transit .route-label::before{
+  background:#4d8f64 !important;
+}
+.transit .transit-title{
+  color:#8fb69b !important;
+}
+
+/* v22: destination card inside transit blocks is also green.
+   Station chips retain their original line-specific colors. */
+.transit .transit-go,
+.transit .transit-go.shop,
+.transit .transit-go.food,
+.transit .transit-go.stay,
+.transit .transit-go.flight{
+  background:#102019 !important;
+  border-color:#3f7f55 !important;
+}
+.transit .transit-go-dest{
+  color:#d9f4e1 !important;
+}
+.transit .transit-go-sub{
+  color:#9fc2aa !important;
+}
+.transit .transit-go-label{
+  color:#79a889 !important;
+}
+.transit .transit-go .next-nav{
+  color:#bcefc8 !important;
+  border-color:#3a7550 !important;
+  background:#102019 !important;
+}
+
+
+/* v24: all restaurant blocks follow the orange restaurant label */
+.card.food,
+.meal{
+  background:linear-gradient(180deg,#29190d,#17110d) !important;
+  border-color:#8a4c1c !important;
+  box-shadow:inset 3px 0 0 #e98a3a,0 10px 35px rgba(0,0,0,.24);
+}
+.meal.preferred,
+.card.food.preferred{
+  box-shadow:inset 3px 0 0 #f0ad55,0 10px 35px rgba(0,0,0,.26) !important;
+}
+.badge.foodtag{
+  background:#4a2a12 !important;
+  color:#ffd0a8 !important;
+  border-color:#9a5a24 !important;
+}
+.meal .choice{
+  color:#f0a965 !important;
+}
+.meal .hours,
+.card.food .hours{
+  border-top-color:#74451f !important;
+  color:#d9b28e !important;
+}
+.meal .recommend,
+.card.food .recommend{
+  color:#e8c3a0 !important;
+}
+.meal .recommend b,
+.card.food .recommend b,
+.meal .hours b,
+.card.food .hours b{
+  color:#ffd1a3 !important;
+}
+
+
+.exit-note{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+  margin-top:7px;
+  font-size:9px;
+  color:#a7b2be;
+}
+.exit-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  border:1px solid #436b50;
+  background:#0f1913;
+  color:#cce7d4;
+  padding:4px 7px;
+  border-radius:999px;
+  font-weight:650;
+}
+.exit-chip.access{
+  border-color:#516777;
+  background:#111820;
+  color:#c7d8e6;
+}
+
+
+/* v25: make station exit + mobility facilities highly visible */
+.access-panel{
+  margin-top:9px;
+  padding:9px 10px;
+  border:1px solid #426d50;
+  border-radius:11px;
+  background:#0d1711;
+}
+.access-head{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-bottom:7px;
+}
+.access-label{
+  font-size:9px;
+  color:#7fa68a;
+  letter-spacing:.08em;
+}
+.access-exit{
+  font-size:12px;
+  font-weight:750;
+  color:#e5f5e9;
+}
+.access-facilities{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.facility{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  min-height:28px;
+  padding:4px 7px;
+  border-radius:8px;
+  border:1px solid #3a4853;
+  background:#111820;
+  color:#cbd4dd;
+  font-size:9px;
+  font-weight:650;
+}
+.facility.yes{
+  border-color:#39704b;
+  background:#102018;
+  color:#c9efd3;
+}
+.facility.no{
+  border-color:#66444a;
+  background:#1c1315;
+  color:#d9a9af;
+}
+.facility.maybe{
+  border-color:#6d633b;
+  background:#1c1a11;
+  color:#ded3a3;
+}
+.access-alt{
+  margin-top:7px;
+  padding-top:7px;
+  border-top:1px dashed #31503b;
+  color:#9fb2a4;
+  font-size:9px;
+  line-height:1.45;
+}
+@media(max-width:520px){
+  .access-facilities{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .facility{
+    justify-content:center;
+    padding-left:4px;
+    padding-right:4px;
+    text-align:center;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="hero">
+  <h1>✨ 首爾醫美吃吃喝喝快閃5日行 🧴🍜🛍️</h1>
+  <div class="hero-subtitle">2026/08/22–08/26｜ v29</div>
+  <div class="legend">
+    <span class="mine">金色＝指定</span>
+    <span style="border-color:#8a4b1b;color:#ffc58f">橘色＝餐廳</span>
+    <span style="border-color:#2b6685;color:#bfe9ff">藍色＝逛店</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-target="overview">總覽</button>
+  <button class="tab" data-target="d1">8/22</button>
+  <button class="tab" data-target="d2">8/23 聖水</button>
+  <button class="tab" data-target="d3">8/24 市區→弘大</button>
+  <button class="tab" data-target="d4">8/25 醫美→仁川</button>
+  <button class="tab" data-target="d5">8/26 回台</button>
+  <button class="tab" data-target="places">指定地點</button>
+</nav>
+
+<main>
+
+<section id="overview" class="panel active">
+  <h3 class="section-title">最常用站號</h3>
+  <div class="card">
+    <div class="transit-row">
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾林"><b>K211</b><span>首爾林<small>서울숲</small></span></a>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a>
+      <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small></span></a>
+      <a class="station line2" href="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 弘大入口"><b>239</b><span>弘大入口<small>홍대입구</small></span></a>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川 T1"><b>A10</b><span>仁川 T1<small>인천공항1터미널</small></span></a>
+    </div>
+  </div>
+
+  <h3 class="section-title">飯店快速導航</h3>
+  <div class="quick-hotels">
+    <div class="quick-hotel">
+      <div class="stay">8/22 → 8/25｜首爾</div>
+      <h4>Jongno Blue Duck Hotel</h4>
+      <div class="ko">블루덕호텔</div>
+      <div class="addr">서울 종로구 종로35길 10</div>
+      <div class="booking-info">
+  <span class="booking-id">Agoda 訂單編號 <b>1739266110</b></span>
+  <a class="booking-mail" href="https://mail.google.com/mail/#all/19ee0dc1403c532f" target="_blank" rel="noopener">開啟 Agoda 確認信 ↗</a>
+</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Blueduck%20hotel%2010%20Jong-ro%2035-gil%20Seoul">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94%20%EC%A2%85%EB%A1%9C35%EA%B8%B8%2010">Naver Map</a>
+      </div>
+    </div>
+    <div class="quick-hotel">
+      <div class="stay">8/25 → 8/26｜仁川</div>
+      <h4>Incheon Airport Global Hotel & Suites</h4>
+      <div class="ko">인천공항 글로벌 호텔 & 스위트</div>
+      <div class="addr">인천 영종구 흰바위로59번길 8</div>
+      <div class="booking-info">
+  <span class="booking-id">Agoda 訂單編號 <b>1739268890</b></span>
+  <a class="booking-mail" href="https://mail.google.com/mail/#all/19ee0eeba545ed06" target="_blank" rel="noopener">開啟 Agoda 確認信 ↗</a>
+</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Incheon%20Airport%20Global%20Hotel%20%26%20Suites%20Unseo">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EA%B8%80%EB%A1%9C%EB%B2%8C%20%ED%98%B8%ED%85%94%20%EC%8A%A4%EC%9C%84%ED%8A%B8%20%EC%9A%B4%EC%84%9C">Naver Map</a>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-title">機票資訊</h3>
+  <div class="overview-flights">
+    <div class="flight">
+      <div class="flight-top"><span class="flight-no">去程｜Jeju Air 7C6102</span><span class="flight-date">8/22（六）</span></div>
+      <div class="flight-route">
+        <div class="airport"><b>11:55 TPE</b><em class="terminal">第 1 航廈 T1</em></div>
+        <div class="plane">→</div>
+        <div class="airport right"><b>15:35 ICN</b><em class="terminal">第 1 航廈 T1</em></div>
+      </div>
+    </div>
+    <div class="flight">
+      <div class="flight-top"><span class="flight-no">回程｜Jeju Air 7C6101</span><span class="flight-date">8/26（三）</span></div>
+      <div class="flight-route">
+        <div class="airport"><b>09:05 ICN</b><em class="terminal">第 1 航廈 T1</em></div>
+        <div class="plane">→</div>
+        <div class="airport right"><b>10:55 TPE</b><em class="terminal">第 1 航廈 T1</em></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="d1" class="panel">
+  <div class="dayhead"><h2>8/22（六）抵達</h2><p>TPE T1 → 仁川機場第1航廈<br>不塞必吃店</p></div><div class="card"><div class="time">11:55 → 15:35</div><h3>Jeju Air 7C6102</h3><div class="note">桃園 T1 出發 → 仁川 T1 抵達。入境＋領行李抓 60–90 分鐘。</div></div>
+  <div class="transit">
+    <div class="transit-go flight">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">Blue Duck Hotel</span>
+        <span class="transit-go-sub">入住首爾飯店</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">8/22 拖行李下車</span><span class="access-exit">129 鐘路五街 8號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility yes">🛗 電梯：有</span>
+  </div>
+  <div class="access-alt"><b>抵達日建議：</b>你從仁川機場一路帶著行李，抵達鐘路五街後直接走 <b>8 號出口側電梯</b>。4 號出口較近，但沒有直達地面電梯；拖行李直接走 8 號出口側電梯。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.571300&dlng=127.006000&dname=%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川機場第1航廈"><b>A10</b><span>仁川機場第1航廈<small>인천공항1터미널</small></span></a> <span class="arrow">→</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EA%B3%B5%ED%95%AD%EC%B2%A0%EB%8F%84" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>A01</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">轉 1 號線</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>133</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">→ 4 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
+    </div>
+    <div class="triptime"><span>🚇 搭車約 68 分</span><span>🚶 轉乘＋步行約 15 分</span><span class="total">⏱ 總計約 80–90 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  
+    <article class="card">
+      <div class="time">約 18:00–18:30 入住</div>
+      <h3>Jongno Blue Duck Hotel</h3>
+      <div class="ko">블루덕호텔</div>
+      <div class="addr">서울 종로구 종로35길 10</div>
+      <div class="access-panel">
+  <div class="access-head"><span class="access-label">入住拖行李</span><span class="access-exit">129 鐘路五街 8號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility yes">🛗 電梯：有</span>
+  </div>
+  <div class="access-alt">有行李時直接走 8 號出口側電梯。</div>
+</div>
+      <div class="booking-info">
+  <span class="booking-id">Agoda 訂單編號 <b>1739266110</b></span>
+  <a class="booking-mail" href="https://mail.google.com/mail/#all/19ee0dc1403c532f" target="_blank" rel="noopener">開啟 Agoda 確認信 ↗</a>
+</div>
+      <div class="note">鐘路五街站附近。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Blueduck%20hotel%2010%20Jong-ro%2035-gil%20Seoul">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/Blueduck%20hotel%2010%20Jong-ro%2035-gil%20Seoul">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 종로구 종로35길 10")'>複製地址</button>
+      </div>
+    </article>
+    
+  <div class="meal-section"><h3>晚餐｜附近 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 1</span><b>陳玉華奶奶元祖一隻雞</b></div>
+          <div class="meal-note">抵達日晚餐首選，離飯店近。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 10:30–01:00｜最後點餐 23:30</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>닭한마리 一隻雞；2 人再加 떡사리 年糕，最後加 국수사리 麵條</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A7%84%EC%98%A5%ED%99%94%ED%95%A0%EB%A7%A4%EC%9B%90%EC%A1%B0%EB%8B%AD%ED%95%9C%EB%A7%88%EB%A6%AC">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A7%84%EC%98%A5%ED%99%94%ED%95%A0%EB%A7%A4%EC%9B%90%EC%A1%B0%EB%8B%AD%ED%95%9C%EB%A7%88%EB%A6%AC">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>順姬家綠豆煎餅</b></div>
+          <div class="meal-note">廣藏市場，若入境較晚可快速處理。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一約 08:00–23:00；週日約 08:00–22:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>모듬：綠豆煎餅 2＋肉丸 1；只想簡單吃就點 녹두빈대떡</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%88%9C%ED%9D%AC%EB%84%A4%20%EB%B9%88%EB%8C%80%EB%96%A1%20%EA%B4%91%EC%9E%A5%EC%8B%9C%EC%9E%A5">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%88%9C%ED%9D%AC%EB%84%A4%20%EB%B9%88%EB%8C%80%EB%96%A1%20%EA%B4%91%EC%9E%A5%EC%8B%9C%EC%9E%A5">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>名人雪濃湯</b></div>
+          <div class="meal-note">湯飯類，長途移動後比較舒服。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>廣藏市場店約 10:00–22:00｜最後點餐 21:30</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>명인 설렁탕 招牌雪濃湯</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%AA%85%EC%9D%B8%EC%84%A4%EB%A0%81%ED%83%95%20%EC%A2%85%EB%A1%9C">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%AA%85%EC%9D%B8%EC%84%A4%EB%A0%81%ED%83%95%20%EC%A2%85%EB%A1%9C">Naver Map</a>
+          </div>
+        </div></div></div>
+
+  
+  <div class="transit">
+    <div class="transit-go shop">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">Olive Young Gwangjang Market</span>
+        <span class="transit-go-sub">廣藏市場 2F｜晚餐後順路逛</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">129 鐘路五街 8號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility no">↗ 手扶梯：無直達</span>
+    <span class="facility yes">🛗 電梯：8–9號側有</span>
+  </div>
+  <div class="access-alt">廣藏市場官方交通指引以 8 號出口為主；電梯位於 8、9 號出口一側。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/walk?dlat=37.570000&dlng=126.999500&dname=%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EA%B4%91%EC%9E%A5%EB%A7%88%EC%BC%93%EC%A0%90&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EA%B4%91%EC%9E%A5%EB%A7%88%EC%BC%93%EC%A0%90" onclick="return openNaverNext(event,this)">NAVER 步行路線 ↗</span>
+      </a>
+    </div>
+    <div class="transit-title">怎麼去</div>
+    <div class="walk-note"><strong>以步行為主：</strong>3 間晚餐候選都在鐘路／廣藏市場一帶，吃完走去 Olive Young 約 3–10 分鐘；實際距離依你當晚選哪間餐廳。</div>
+    <div class="triptime">
+      <span>🚶 步行約 3–10 分</span>
+      <span class="total">⏱ 晚餐後直接逛，不需搭地鐵</span>
+    </div>
+  </div>
+
+  <article class="card shop preferred">
+    <div class="time">約 19:30–21:30｜晚餐後</div>
+    <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>Olive Young Gwangjang Market</h3>
+    <div class="ko">올리브영 광장마켓점</div>
+    <div class="addr">서울 종로구 창경궁로 88 광장시장 2F</div>
+    <div class="shop-detail">
+      <div class="shop-row"><span class="shop-label">營業</span><span>約 10:00–22:00；晚間建議 21:30 前進店，當日再以 Naver Map 顯示為準。</span></div>
+      <div class="shop-row"><span class="shop-label">規模</span><span>約 806㎡／244 坪，位於廣藏市場 2F，是大型觀光特色店。</span></div>
+      <div class="shop-row"><span class="shop-label">品項</span><span>K-Beauty 保養、彩妝、面膜、防曬、護髮等；另有自然原料主題專區。</span></div>
+      <div class="shop-row popular"><span class="shop-label">特色</span><span>天然原料策展、皮膚／頭皮與 Personal Color 體驗、復古韓風拍照區。第一晚可先逛與補基本品項，8/24 明洞再做大量採買。</span></div>
+    </div>
+    <div class="actions">
+      <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EA%B4%91%EC%9E%A5%EB%A7%88%EC%BC%93%EC%A0%90">Google Maps</a>
+      <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EA%B4%91%EC%9E%A5%EB%A7%88%EC%BC%93%EC%A0%90">Naver Map</a>
+      <button class="btn" onclick='copyText(this, "서울 종로구 창경궁로 88 광장시장 2F")'>複製地址</button>
+    </div>
+  </article>
+
+  <div class="transit">
+    <div class="transit-purpose stay">
+      <div class="ctx">
+        <span class="ctx-label">現在</span>
+        <span class="ctx-main">Olive Young Gwangjang Market</span>
+        <span class="ctx-sub">逛完第一晚 Olive Young</span>
+      </div>
+      <div class="ctx-arrow">→</div>
+      <a class="ctx ctx-dest" href="nmap://route/walk?dlat=37.571300&dlng=127.006000&dname=%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94" onclick="return openNaverNext(event,this)">
+        <span class="ctx-label">下一站</span>
+        <span class="ctx-main">Blue Duck Hotel</span>
+        <span class="ctx-sub">逛完步行回飯店休息</span>
+        <span class="next-nav">NAVER 步行路線 ↗</span>
+      </a>
+    </div>
+    <div class="walk-note"><strong>回飯店：</strong>從廣藏市場步行回 Blue Duck Hotel 約 7–10 分鐘，不需要再搭地鐵。</div>
+    <div class="triptime">
+      <span>🚶 步行約 7–10 分</span>
+      <span class="total">⏱ 約 22:00 前後回飯店最舒服</span>
+    </div>
+  </div>
+
+  <h3 class="section-title">整日路線地圖</h3>
+  <div class="map-card">
+      <div class="map-head">
+        <div><span class="eyebrow">LIVE MAP</span><h3>抵達日｜仁川 T1 → 飯店 → 晚餐 → Olive Young → 飯店</h3></div>
+        <a class="btn routebtn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Incheon%20International%20Airport%20Terminal%201&destination=Blueduck%20hotel%2010%20Jong-ro%2035-gil%20Seoul&waypoints=Seoul%20Station%7CBlueduck%20hotel%20Seoul%7CGwangjang%20Market%7COlive%20Young%20Gwangjang%20Market">Google Maps 全日路線 ↗</a>
+      </div>
+      <div id="map-d1" class="day-map"></div>
+      <div class="map-note"><b style="color:#ffad63">橘色＝餐廳</b>、<b style="color:#75c9f4">藍色＝逛店</b>、<b style="color:#c9bfff">紫色房子＝飯店</b>。<b>飯店不列入序號</b>，每天從第一個實際行程點開始標 1 → 2 → 3…。若第 3 站是餐廳，主選標 <b>3</b>，備選標 <b>3-1／3-2</b>。虛線仍完整連接住宿與主行程。</div>
+    </div>
+</section>
+
+<section id="d2" class="panel">
+  <div class="dayhead"><h2>8/23（日）首爾林 → 聖水</h2><p>西 → 東<br>避免折返</p></div><div class="meal-section"><h3>08:00–09:00 早餐｜飯店附近 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 1</span><b>Blue Duck Cafe</b></div>
+          <div class="meal-note">飯店附近，最省移動。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>飯店早餐 07:00–10:00；Cafe 週日約 08:00 起</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>飯店現做早餐；單點咖啡可選招牌 Einspänner</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%B8%94%EB%A3%A8%EB%8D%95%EC%B9%B4%ED%8E%98%20%EC%A2%85%EB%A1%9C">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%B8%94%EB%A3%A8%EB%8D%95%EC%B9%B4%ED%8E%98%20%EC%A2%85%EB%A1%9C">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>EMMA Bakery</b></div>
+          <div class="meal-note">鐘路五街附近麵包早餐。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週日 08:00–23:30；平日多為 07:30 起</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>왕모찌 王麻糬／紅豆糯米糕</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%97%A0%EB%A7%88%20%EC%A2%85%EB%A1%9C5%EA%B0%80">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%97%A0%EB%A7%88%20%EC%A2%85%EB%A1%9C5%EA%B0%80">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>Wagle Wagle Bake Shop</b></div>
+          <div class="meal-note">咖啡＋麵包備案。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 07:30–21:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>Pure Milk Cream Crowagle；喜歡抹茶可換 Matcha Crowagle</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%99%80%EA%B8%80%EC%99%80%EA%B8%80%20%EB%B2%A0%EC%9D%B4%ED%81%AC%EC%83%B5%20%EC%9D%84%EC%A7%80%EB%A1%9C">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%99%80%EA%B8%80%EC%99%80%EA%B8%80%20%EB%B2%A0%EC%9D%B4%ED%81%AC%EC%83%B5%20%EC%9D%84%EC%A7%80%EB%A1%9C">Naver Map</a>
+          </div>
+        </div></div></div>
+  
+<div class="transit">
+  <div class="transit-go shop">
+    <div class="transit-go-main">
+      <span class="transit-go-label">前往</span>
+      <span class="transit-go-dest">首爾林站 5 號出口（K211）</span>
+      <span class="transit-go-sub">作為 JUUNEEDU Seoul Forest 的下車目的地；出站後步行約 5–8 分鐘到 JUUNEEDU。</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">K211 首爾林 5號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility maybe">↗ 手扶梯：未確認</span>
+    <span class="facility yes">🛗 電梯：有</span>
+  </div>
+  <div class="access-alt">5 號出口側有連通電梯；到 JUUNEEDU Seoul Forest 約步行 5–8 分。</div>
+</div>
+    </div>
+    <a class="next-nav"
+       href="nmap://route/public?dlat=37.5437&dlng=127.0447&dname=%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD%205%EB%B2%88%EC%B6%9C%EA%B5%AC&appname=https%3A%2F%2Fseoul-trip.local"
+       data-fallback="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD%205%EB%B2%88%EC%B6%9C%EA%B5%AC"
+       onclick="return openNaverNext(event,this)">NAVER 大眾運輸 ↗</a>
+  </div>
+
+  <div class="route-label">交通路線</div>
+  <div class="transit-row">
+    <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener">
+      <b>129</b><span>鐘路五街<small>종로5가</small></span>
+    </a>
+    <span class="arrow">→ 5 站</span>
+    <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener">
+      <b>124</b><span>清涼里<small>청량리</small></span>
+    </a>
+    <span class="arrow">轉 水仁盆唐</span>
+    <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener">
+      <b>K209</b><span>清涼里<small>청량리</small></span>
+    </a>
+    <span class="arrow">→ 2 站</span>
+    <a class="station sb" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD" target="_blank" rel="noopener">
+      <b>K211</b><span>首爾林<small>서울숲</small></span>
+    </a>
+  </div>
+
+  <div class="triptime">
+    <span>🚇 搭車約 19 分</span>
+    <span>🚶 轉乘＋出站約 13 分</span>
+    <span class="total">⏱ 總計約 30–35 分</span>
+    <small>目的地先抓「首爾林站 5 號出口」，出站後再步行到 JUUNEEDU Seoul Forest，辨識會比直接用店名穩定。</small>
+  </div>
+</div>
+
+<div class="walk-note"><strong>抵達 K211 首爾林後：</strong>接下來 JUUNEEDU → Verish → 午餐 → STAND OIL → Jojo 都在首爾林／聖水一帶，以步行串聯為主，不需要每間店都重新搭地鐵。</div>
+  <article class="card shop preferred">
+      <div class="time">12:00–12:40</div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>JUUNEEDU Seoul Forest</h3>
+      <div class="ko">쥬니쥬 쇼룸 서울숲점</div>
+      <div class="addr">서울 성동구 서울숲2길 8-11</div><div class="shop-detail"><div class="shop-row"><span class="shop-label">營業</span><span>每日 12:00–20:00</span></div><div class="shop-row"><span class="shop-label">品項</span><span>睡衣／居家服為主，另有情侶款、Baby／Family、洗臉髮帶、拖鞋、圍裙與居家小物。</span></div><div class="shop-row popular"><span class="shop-label">熱門逛</span><span>先看 J'eu 7Days 縐棉睡衣系列；官網 Best 頁顯示經典 7Days 已累積超過 11 萬件。Flower 7Days、Daphne 系列與可愛洗臉髮帶也很熱門。</span></div></div>
+      <div class="note">從最西側開始逛。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A5%AC%EB%8B%88%EC%A5%AC%20%EC%87%BC%EB%A3%B8%20%EC%84%9C%EC%9A%B8%EC%88%B2%EC%A0%90">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A5%AC%EB%8B%88%EC%A5%AC%20%EC%87%BC%EB%A3%B8%20%EC%84%9C%EC%9A%B8%EC%88%B2%EC%A0%90">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 서울숲2길 8-11")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card shop preferred">
+      <div class="time">12:45–13:15</div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>Verish Seongsu Flagship</h3>
+      <div class="ko">베리시 성수 플래그십 스토어</div>
+      <div class="addr">서울 성동구 연무장길 36</div>
+      <div class="note">沿聖水方向往東。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%B2%A0%EB%A6%AC%EC%8B%9C%20%EC%84%B1%EC%88%98%20%ED%94%8C%EB%9E%98%EA%B7%B8%EC%8B%AD%20%EC%8A%A4%ED%86%A0%EC%96%B4">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%B2%A0%EB%A6%AC%EC%8B%9C%20%EC%84%B1%EC%88%98%20%ED%94%8C%EB%9E%98%EA%B7%B8%EC%8B%AD%20%EC%8A%A4%ED%86%A0%EC%96%B4">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 연무장길 36")'>複製地址</button>
+      </div>
+    </article>
+    
+  <div class="meal-section"><h3>13:20 午餐｜聖水 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food preferred">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span><b>無垢屋 聖水店</b></div>
+          <div class="meal-note">指定的人參雞湯飯。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 11:30–21:00｜15:00–17:30 休息｜午餐最後點餐 14:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>이북식 삼계백반 北韓式蔘雞白飯定食</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%AC%B4%EA%B5%AC%EC%98%A5%20%EC%84%B1%EC%88%98%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%AC%B4%EA%B5%AC%EC%98%A5%20%EC%84%B1%EC%88%98%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>Seongsu Darak</b></div>
+          <div class="meal-note">聖水人氣融合料理備案。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>11:30–21:15｜最後點餐 20:30</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>다락 오므라이스 招牌蛋包飯</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%84%B1%EC%88%98%EB%8B%A4%EB%9D%BD">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EB%8B%A4%EB%9D%BD">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>Schedule Seongsu</b></div>
+          <div class="meal-note">座位與用餐彈性較高。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日約 11:00–01:00｜最後點餐 00:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>김치볶음밥 招牌泡菜炒飯；想吃西式可選窯烤披薩</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%8A%A4%EC%BC%80%EC%A4%84%20%EC%84%B1%EC%88%98">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%8A%A4%EC%BC%80%EC%A4%84%20%EC%84%B1%EC%88%98">Naver Map</a>
+          </div>
+        </div></div></div>
+  
+    <article class="card shop preferred">
+      <div class="time">14:30–15:15</div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>STAND OIL Seongsu</h3>
+      <div class="ko">스탠드오일 성수</div>
+      <div class="addr">서울 성동구 연무장11길 19</div>
+      <div class="note">午餐後繼續聖水核心區。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%8A%A4%ED%83%A0%EB%93%9C%EC%98%A4%EC%9D%BC%20%EC%84%B1%EC%88%98">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%8A%A4%ED%83%A0%EB%93%9C%EC%98%A4%EC%9D%BC%20%EC%84%B1%EC%88%98">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 연무장11길 19")'>複製地址</button>
+      </div>
+    </article>
+    
+  <div class="card"><div class="time">15:15–17:20</div><h3>聖水咖啡／選物自由時間</h3><div class="note">當作排隊與逛店緩衝。</div></div>
+  <div class="meal-section"><h3>17:30–19:00 晚餐｜聖水 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food preferred">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span><b>Jojo Kalguksu 聖水店</b></div>
+          <div class="meal-note">指定的刀削麵。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 10:00–21:30；部分平日資料標 16:00–17:00 休息</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>동죽칼국수 蛤蜊刀削麵；2 人很推薦再加 낙지해물파전 海鮮煎餅</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A1%B0%EC%A1%B0%EC%B9%BC%EA%B5%AD%EC%88%98%20%EC%84%B1%EC%88%98%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A1%B0%EC%A1%B0%EC%B9%BC%EA%B5%AD%EC%88%98%20%EC%84%B1%EC%88%98%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>Somunnan Seongsu Gamjatang</b></div>
+          <div class="meal-note">馬鈴薯排骨湯。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>24 小時／全年無休（別館資料）</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>감자탕 小份（2 人）；最後加 볶음밥 炒飯</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%86%8C%EB%AC%B8%EB%82%9C%EC%84%B1%EC%88%98%EA%B0%90%EC%9E%90%ED%83%95">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%86%8C%EB%AC%B8%EB%82%9C%EC%84%B1%EC%88%98%EA%B0%90%EC%9E%90%ED%83%95">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>Schedule Seongsu</b></div>
+          <div class="meal-note">逛太久時的晚餐保底。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日約 11:00–01:00｜最後點餐 00:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>김치볶음밥 招牌泡菜炒飯；想吃西式可選窯烤披薩</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%8A%A4%EC%BC%80%EC%A4%84%20%EC%84%B1%EC%88%98">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%8A%A4%EC%BC%80%EC%A4%84%20%EC%84%B1%EC%88%98">Naver Map</a>
+          </div>
+        </div></div></div>
+  <div class="transit">
+    <div class="transit-go stay">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">Blue Duck Hotel</span>
+        <span class="transit-go-sub">回飯店休息</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">129 鐘路五街 4號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility no">↗ 手扶梯：無直達</span>
+    <span class="facility no">🛗 電梯：無直達</span>
+  </div>
+  <div class="access-alt">拖行李改走 8–9 號出口側電梯。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.571300&dlng=127.006000&dname=%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small></span></a> <span class="arrow">支線 →</span>
+      <a class="station line2" href="https://map.naver.com/p/search/%EC%8B%A0%EC%84%A4%EB%8F%99%EC%97%AD%202%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 新設洞"><b>211-4</b><span>新設洞<small>신설동</small></span></a> <span class="arrow">轉 1 號線</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%8B%A0%EC%84%A4%EB%8F%99%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 新設洞"><b>126</b><span>新設洞<small>신설동</small></span></a> <span class="arrow">→ 3 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
+    </div>
+    <div class="triptime"><span>🚇 搭車約 18 分</span><span>🚶 轉乘＋步行約 10 分</span><span class="total">⏱ 總計約 25–30 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+
+  <h3 class="section-title">整日路線地圖</h3>
+  <div class="map-card">
+      <div class="map-head">
+        <div><span class="eyebrow">LIVE MAP</span><h3>首爾林 → 聖水｜西往東走，避免折返</h3></div>
+        <a class="btn routebtn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Blueduck%20hotel%20Seoul&destination=Jojo%20Kalguksu%20Seongsu&waypoints=Seoul%20Forest%20Station%7CJUUNEEDU%20Seoul%20Forest%7CVerish%20Seongsu%7CMuguok%20Seongsu%7CSTAND%20OIL%20Seongsu">Google Maps 全日路線 ↗</a>
+      </div>
+      <div id="map-d2" class="day-map"></div>
+      <div class="map-note"><b style="color:#ffad63">橘色＝餐廳</b>、<b style="color:#75c9f4">藍色＝逛店</b>、<b style="color:#c9bfff">紫色房子＝飯店</b>。<b>飯店不列入序號</b>，每天從第一個實際行程點開始標 1 → 2 → 3…。若第 3 站是餐廳，主選標 <b>3</b>，備選標 <b>3-1／3-2</b>。虛線仍完整連接住宿與主行程。</div>
+    </div>
+</section>
+
+<section id="d3" class="panel">
+  <div class="dayhead"><h2>8/24（一）鐘閣 → 明洞 → 弘大</h2><p>一路往西<br>晚餐留弘大</p></div><div class="transit">
+    <div class="transit-go food">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">鐘閣／光化門早餐區</span>
+        <span class="transit-go-sub">主選 JO & DAWSON</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">131 鐘閣 1號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility yes">↗ 手扶梯：有</span>
+    <span class="facility yes">🛗 電梯：有</span>
+  </div>
+  <div class="access-alt">1 號出口同側有地面電梯與上下行手扶梯，前往光化門方向最方便。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.570700&dlng=126.982900&dname=%EC%A1%B0%EC%95%A4%EB%8F%84%EC%8A%A8%20%EA%B4%91%ED%99%94%EB%AC%B8%EC%A0%90&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EC%A1%B0%EC%95%A4%EB%8F%84%EC%8A%A8%20%EA%B4%91%ED%99%94%EB%AC%B8%EC%A0%90" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row"><a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a> <span class="arrow">→ 2 站</span> <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EA%B0%81%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘閣"><b>131</b><span>鐘閣<small>종각</small></span></a></div>
+    <div class="triptime"><span>🚇 搭車約 5 分</span><span>🚶 步行約 8–10 分</span><span class="total">⏱ 總計約 13–15 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  <div class="meal-section"><h3>08:15–09:30 早餐｜鐘閣／光化門 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food preferred">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span><b>JO & DAWSON 光化門店</b></div>
+          <div class="meal-note">指定的法式吐司。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一 07:30–20:00｜最後點餐 19:00；週末約 10:00 起</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>Classic French Toast 經典法式吐司</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A1%B0%EC%95%A4%EB%8F%84%EC%8A%A8%20%EA%B4%91%ED%99%94%EB%AC%B8%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A1%B0%EC%95%A4%EB%8F%84%EC%8A%A8%20%EA%B4%91%ED%99%94%EB%AC%B8%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>Cafe Mamas 光化門</b></div>
+          <div class="meal-note">三明治／沙拉／咖啡。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一 08:00–21:30｜最後點餐 21:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>Mozzarella Tomato Panini；想吃清爽則 Ricotta Cheese Salad</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%B9%B4%ED%8E%98%EB%A7%88%EB%A7%88%EC%8A%A4%20%EA%B4%91%ED%99%94%EB%AC%B8">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%B9%B4%ED%8E%98%EB%A7%88%EB%A7%88%EC%8A%A4%20%EA%B4%91%ED%99%94%EB%AC%B8">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>Gyeol by BEAN BROTHERS</b></div>
+          <div class="meal-note">咖啡＋輕食快速版。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一～五 07:30–20:30｜最後點餐 20:00；週末 10:00–21:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>Canelé 可麗露＋Filter Coffee</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EA%B2%B0%20%EB%B0%94%EC%9D%B4%20%EB%B9%88%EB%B8%8C%EB%9D%BC%EB%8D%94%EC%8A%A4%20%EC%A2%85%EB%A1%9C">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EA%B2%B0%20%EB%B0%94%EC%9D%B4%20%EB%B9%88%EB%B8%8C%EB%9D%BC%EB%8D%94%EC%8A%A4%20%EC%A2%85%EB%A1%9C">Naver Map</a>
+          </div>
+        </div></div></div>
+  
+    <article class="card shop preferred">
+      <div class="time">10:00–11:45</div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>Olive Young Myeongdong Town</h3>
+      <div class="ko">올리브영 명동 타운</div>
+      <div class="addr">서울 중구 명동길 53</div>
+      <div class="note">主要 Olive Young 採買放這裡。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EB%AA%85%EB%8F%99%20%ED%83%80%EC%9A%B4">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EB%AA%85%EB%8F%99%20%ED%83%80%EC%9A%B4">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 중구 명동길 53")'>複製地址</button>
+      </div>
+    </article>
+    
+  <div class="meal-section"><h3>12:00–13:10 午餐｜明洞 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 1</span><b>明洞餃子 本店</b></div>
+          <div class="meal-note">明洞經典刀切麵＋餃子。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 10:30–21:00｜最後點餐約 20:30</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>칼국수 招牌刀切麵；2 人可再加 만두 餃子</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%AA%85%EB%8F%99%EA%B5%90%EC%9E%90%20%EB%B3%B8%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%AA%85%EB%8F%99%EA%B5%90%EC%9E%90%20%EB%B3%B8%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>河東館 明洞本店</b></div>
+          <div class="meal-note">老字號牛骨湯飯。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一～六 07:00–16:00｜週日休</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>곰탕 牛骨湯飯；食量大可點 특 特碗</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%ED%95%98%EB%8F%99%EA%B4%80%20%EB%AA%85%EB%8F%99%EB%B3%B8%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%ED%95%98%EB%8F%99%EA%B4%80%20%EB%AA%85%EB%8F%99%EB%B3%B8%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>The Sic-ddang 明洞</b></div>
+          <div class="meal-note">選擇多、臨時替換方便。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日約 11:00–23:00｜最後點餐約 22:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>直火小章魚＋바지락칼국수 蛤蜊刀削麵套餐</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%8D%94%EC%8B%9D%EB%8B%B9%20%EB%AA%85%EB%8F%99">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%8D%94%EC%8B%9D%EB%8B%B9%20%EB%AA%85%EB%8F%99">Naver Map</a>
+          </div>
+        </div></div></div>
+  <div class="transit">
+    <div class="transit-go shop">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">弘大／延南洞</span>
+        <span class="transit-go-sub">下午逛街＋晚餐</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">239 弘大入口 3號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility no">↗ 手扶梯：無直達</span>
+    <span class="facility yes">🛗 電梯：有</span>
+  </div>
+  <div class="access-alt">3 號出口就是延南洞方向；3 號出口側有電梯；手扶梯主要在 1、2 號出口。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.556300&dlng=126.923700&dname=%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row"><a class="station line2" href="https://map.naver.com/p/search/%EC%9D%84%EC%A7%80%EB%A1%9C%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 乙支路入口"><b>202</b><span>乙支路入口<small>을지로입구</small></span></a> <span class="arrow">→ 8 站</span> <a class="station line2" href="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 弘大入口"><b>239</b><span>弘大入口<small>홍대입구</small></span></a></div>
+    <div class="triptime"><span>🚇 搭車約 18 分</span><span>🚶 步行約 10–12 分</span><span class="total">⏱ 總計約 28–32 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  <div class="card"><div class="time">14:00–17:15</div><h3>弘大／延南洞逛街</h3></div>
+  <div class="meal-section"><h3>17:30–19:00 晚餐｜弘大 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food preferred">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span><b>給豚的男人 本店</b></div>
+          <div class="meal-note">指定的弘大烤肉。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一約 13:00–00:00｜最後點餐 22:50；週末約 12:00 起</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>제주 연탄초벌 근고기 540g 濟州炭火預烤厚切豬肉</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%8F%88%EC%A3%BC%EB%8A%94%EB%82%A8%EC%9E%90%20%EB%B3%B8%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%8F%88%EC%A3%BC%EB%8A%94%EB%82%A8%EC%9E%90%20%EB%B3%B8%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>新美京弘大辣炒雞排</b></div>
+          <div class="meal-note">弘大辣炒雞排備案。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 11:00–22:30｜最後點餐 21:40</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>치즈 퐁듀 닭갈비 起司鍋辣炒雞排</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%8B%A0%EB%AF%B8%EA%B2%BD%ED%99%8D%EB%8C%80%EB%8B%AD%EA%B0%88%EB%B9%84">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%8B%A0%EB%AF%B8%EA%B2%BD%ED%99%8D%EB%8C%80%EB%8B%AD%EA%B0%88%EB%B9%84">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>新村食堂 弘大西橋店</b></div>
+          <div class="meal-note">同區韓式烤肉備案。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>24 小時｜約 14:30–16:00 休息</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>열탄불고기 熱炭烤肉；也可搭 7분돼지김치 七分鐘豬肉泡菜鍋</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%83%88%EB%A7%88%EC%9D%84%EC%8B%9D%EB%8B%B9%20%ED%99%8D%EB%8C%80%EC%84%9C%EA%B5%90%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%83%88%EB%A7%88%EC%9D%84%EC%8B%9D%EB%8B%B9%20%ED%99%8D%EB%8C%80%EC%84%9C%EA%B5%90%EC%A0%90">Naver Map</a>
+          </div>
+        </div></div></div>
+
+  
+  <div class="transit">
+    <div class="transit-go stay">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">Blue Duck Hotel</span>
+        <span class="transit-go-sub">回飯店休息</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">129 鐘路五街 4號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility no">↗ 手扶梯：無直達</span>
+    <span class="facility no">🛗 電梯：無直達</span>
+  </div>
+  <div class="access-alt">拖行李改走 8–9 號出口側電梯。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.571300&dlng=127.006000&dname=%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EB%B8%94%EB%A3%A8%EB%8D%95%ED%98%B8%ED%85%94" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station line2" href="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 弘大入口"><b>239</b><span>弘大入口<small>홍대입구</small></span></a>
+      <span class="arrow">→</span>
+      <a class="station line2" href="https://map.naver.com/p/search/%EC%8B%9C%EC%B2%AD%EC%97%AD%202%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 市廳"><b>201</b><span>市廳<small>시청</small></span></a>
+      <span class="arrow">轉 1 號線</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%8B%9C%EC%B2%AD%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 市廳"><b>132</b><span>市廳<small>시청</small></span></a>
+      <span class="arrow">→ 3 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
+    </div>
+    <div class="triptime">
+      <span>🚇 搭車約 22–25 分</span>
+      <span>🚶 轉乘＋步行約 10 分</span>
+      <span class="total">⏱ 總計約 35 分</span>
+      <small>平常時段估算，不含等車；現場以 Naver Map 即時路線為準。</small>
+    </div>
+  </div>
+
+  <h3 class="section-title">整日路線地圖</h3>
+  <div class="map-card">
+      <div class="map-head">
+        <div><span class="eyebrow">LIVE MAP</span><h3>鐘路 → 明洞 → 弘大｜一路往西</h3></div>
+        <a class="btn routebtn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Blueduck%20hotel%20Seoul&destination=%EB%8F%88%EC%A3%BC%EB%8A%94%EB%82%A8%EC%9E%90%20%EB%B3%B8%EC%A0%90&waypoints=JO%20%26%20DAWSON%20Gwanghwamun%7COlive%20Young%20Myeongdong%20Town%7CHongik%20University%20Station">Google Maps 全日路線 ↗</a>
+      </div>
+      <div id="map-d3" class="day-map"></div>
+      <div class="map-note"><b style="color:#ffad63">橘色＝餐廳</b>、<b style="color:#75c9f4">藍色＝逛店</b>、<b style="color:#c9bfff">紫色房子＝飯店</b>。<b>飯店不列入序號</b>，每天從第一個實際行程點開始標 1 → 2 → 3…。若第 3 站是餐廳，主選標 <b>3</b>，備選標 <b>3-1／3-2</b>。虛線仍完整連接住宿與主行程。</div>
+    </div>
+</section>
+
+<section id="d4" class="panel">
+  <div class="dayhead"><h2>8/25（二）醫美 → 市區晚餐 → 雲西</h2><p>10:30 開始<br>抓 3–4 小時</p></div><div class="transit">
+    <div class="transit-go food">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">狎鷗亭羅德奧／清潭早餐區</span>
+        <span class="transit-go-sub">早餐後 10:30 到 LUNN 醫美</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">K212 狎鷗亭羅德奧 4號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility maybe">↗ 手扶梯：未確認</span>
+    <span class="facility maybe">🛗 電梯：未確認</span>
+  </div>
+  <div class="access-alt">Oasis 與 LUNN 都適合從 4 號出口前往；4 號出口目前只確認到一般出入口；手扶梯／電梯未確認直達地面。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.525000&dlng=127.038400&dname=%EC%98%A4%EC%95%84%EC%8B%9C%EC%8A%A4%20%EC%B2%AD%EB%8B%B4%EC%A0%90&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EC%98%A4%EC%95%84%EC%8B%9C%EC%8A%A4%20%EC%B2%AD%EB%8B%B4%EC%A0%90" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a> <span class="arrow">→ 5 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">轉 水仁盆唐</span>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">→ 3 站</span>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a>
+    </div>
+    <div class="triptime"><span>🚇 搭車約 25 分</span><span>🚶 轉乘＋步行約 15 分</span><span class="total">⏱ 總計約 40–45 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  <div class="meal-section"><h3>08:20–09:40 早餐｜醫美附近 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 1</span><b>Oasis Cheongdam</b></div>
+          <div class="meal-note">最推薦；靠近醫美，早餐後直接走去診所。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 08:00–17:00｜最後點餐約 16:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>훈제연어 에그 베네딕트 煙燻鮭魚班尼迪克蛋</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%98%A4%EC%95%84%EC%8B%9C%EC%8A%A4%20%EC%B2%AD%EB%8B%B4%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%98%A4%EC%95%84%EC%8B%9C%EC%8A%A4%20%EC%B2%AD%EB%8B%B4%EC%A0%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>Lot’s O Bagels</b></div>
+          <div class="meal-note">Bagel 早餐備案。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週二 07:00–15:30；其他平日多約 15:00 關，週末較晚</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>Whole Wheat Everything Bagel＋Scallion Cream Cheese</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%9D%BC%EC%B8%A0%EC%98%A4%EB%B2%A0%EC%9D%B4%EA%B8%80%20%EC%95%95%EA%B5%AC%EC%A0%95">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%9D%BC%EC%B8%A0%EC%98%A4%EB%B2%A0%EC%9D%B4%EA%B8%80%20%EC%95%95%EA%B5%AC%EC%A0%95">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>Maison Jo Cheongdam</b></div>
+          <div class="meal-note">08:00 開門，時間比 Knotted 更適合這天醫美前早餐。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>08:00–22:00｜16:00–18:00 休息</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>잠봉 샌드위치 Jambon 火腿三明治</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%A9%94%EC%A2%85%EC%A1%B0%20%EC%B2%AD%EB%8B%B4%EC%A0%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%A9%94%EC%A2%85%EC%A1%B0%20%EC%B2%AD%EB%8B%B4%EC%A0%90">Naver Map</a>
+          </div>
+        </div></div></div>
+  
+    <div class="walk-note"><strong>早餐吃完：</strong>不用再搭地鐵，直接從清潭／狎鷗亭羅德奧早餐區步行前往 LUNN；以 10:10 前抵達診所為目標。</div>
+  <article class="card">
+      <div class="time">10:30–約 13:30 / 14:30</div>
+      <h3>LUNN Dermatology Cheongdam</h3>
+      <div class="ko">룬피부과 청담</div>
+      <div class="addr">서울 강남구 청담동 85-2, 5층</div>
+      <div class="note">療程抓 3–4 小時，建議 10:10 前抵達。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%A3%AC%ED%94%BC%EB%B6%80%EA%B3%BC%20%EC%B2%AD%EB%8B%B4">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%A3%AC%ED%94%BC%EB%B6%80%EA%B3%BC%20%EC%B2%AD%EB%8B%B4">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 강남구 청담동 85-2, 5층")'>複製地址</button>
+      </div>
+    </article>
+    
+  <div class="transit">
+    <div class="transit-go food">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">鐘路／廣藏市場</span>
+        <span class="transit-go-sub">回市區休息＋吃晚餐</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">129 鐘路五街：飯店走 4號／廣藏市場走 8號</span></div>
+  <div class="access-facilities">
+    <span class="facility no">↗ 手扶梯：無直達</span>
+    <span class="facility maybe">🛗 電梯 8–9號側有</span>
+  </div>
+  <div class="access-alt">8/25 這次回來還要拿寄放行李：空手去飯店時 4 號出口最近；但拿到行李後／拖行李移動時，優先走 8 號出口側電梯。若直接去廣藏市場也以 8 號出口較順。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.570000&dlng=126.999000&dname=%EA%B4%91%EC%9E%A5%EC%8B%9C%EC%9E%A5&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EA%B4%91%EC%9E%A5%EC%8B%9C%EC%9E%A5" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a> <span class="arrow">→</span>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">轉 1 號線</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">→</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
+    </div>
+    <div class="triptime"><span>🚇 搭車約 25 分</span><span>🚶 轉乘＋步行約 12 分</span><span class="total">⏱ 總計約 35–40 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  <div class="meal-section"><h3>17:00–18:15 晚餐｜鐘路／廣藏市場 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 1</span><b>陳玉華奶奶元祖一隻雞</b></div>
+          <div class="meal-note">回飯店區吃完再拿行李。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>每日 10:30–01:00｜最後點餐 23:30</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>닭한마리 一隻雞；2 人再加 떡사리 年糕，最後加 국수사리 麵條</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A7%84%EC%98%A5%ED%99%94%ED%95%A0%EB%A7%A4%EC%9B%90%EC%A1%B0%EB%8B%AD%ED%95%9C%EB%A7%88%EB%A6%AC">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A7%84%EC%98%A5%ED%99%94%ED%95%A0%EB%A7%A4%EC%9B%90%EC%A1%B0%EB%8B%AD%ED%95%9C%EB%A7%88%EB%A6%AC">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>名人雪濃湯</b></div>
+          <div class="meal-note">療程後想吃清淡熱湯最穩。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>廣藏市場店約 10:00–22:00｜最後點餐 21:30</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>명인 설렁탕 招牌雪濃湯</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%AA%85%EC%9D%B8%EC%84%A4%EB%A0%81%ED%83%95%20%EC%A2%85%EB%A1%9C">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%AA%85%EC%9D%B8%EC%84%A4%EB%A0%81%ED%83%95%20%EC%A2%85%EB%A1%9C">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>順姬家綠豆煎餅</b></div>
+          <div class="meal-note">時間較趕時最容易控制。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>週一約 08:00–23:00；週日約 08:00–22:00</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>모듬：綠豆煎餅 2＋肉丸 1；只想簡單吃就點 녹두빈대떡</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%88%9C%ED%9D%AC%EB%84%A4%20%EB%B9%88%EB%8C%80%EB%96%A1%20%EA%B4%91%EC%9E%A5%EC%8B%9C%EC%9E%A5">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%88%9C%ED%9D%AC%EB%84%A4%20%EB%B9%88%EB%8C%80%EB%96%A1%20%EA%B4%91%EC%9E%A5%EC%8B%9C%EC%9E%A5">Naver Map</a>
+          </div>
+        </div></div></div>
+  <div class="card">
+  <div class="time">18:15–18:30</div>
+  <h3>Blue Duck Hotel 拿寄放行李</h3>
+  <div class="note good">吃完再拿大行李，避免拖行李去吃飯。</div>
+  <div class="access-panel">
+    <div class="access-head">
+      <span class="access-label">拿行李動線</span>
+      <span class="access-exit">129 鐘路五街站</span>
+    </div>
+    <div class="access-facilities">
+      <span class="facility yes">🛗 拖行李：8號出口有電梯</span>
+      <span class="facility maybe">約步行 5 分到飯店</span>
+    </div>
+    <div class="access-alt"><b>建議：</b>回來吃晚餐時空手可走 4 號出口；拿完寄放行李後要前往首爾站／雲西時，直接改走 <b>8 號出口側電梯</b>，不要扛行李走 4 號出口。</div>
+  </div>
+</div>
+  <div class="transit">
+    <div class="transit-go stay">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">雲西機場飯店</span>
+        <span class="transit-go-sub">入住後直接休息</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">A08 雲西 1號出口</span></div>
+  <div class="access-facilities">
+    <span class="facility maybe">↗ 手扶梯：未確認</span>
+    <span class="facility maybe">🛗 電梯 站內有</span>
+  </div>
+  <div class="access-alt">飯店就在 1 號出口附近。AREX 站內有電梯；目前較可靠資料指向 2 號出口側有電梯，1 號出口直達電梯未確認。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.493200&dlng=126.493500&dname=%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EA%B8%80%EB%A1%9C%EB%B2%8C%20%ED%98%B8%ED%85%94%20%26%20%EC%8A%A4%EC%9C%84%ED%8A%B8&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EA%B8%80%EB%A1%9C%EB%B2%8C%20%ED%98%B8%ED%85%94%20%26%20%EC%8A%A4%EC%9C%84%ED%8A%B8" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a> <span class="arrow">→</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>133</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">轉 AREX</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EA%B3%B5%ED%95%AD%EC%B2%A0%EB%8F%84" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>A01</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">一般列車 →</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a>
+    </div>
+    <div class="triptime"><span>🚇 搭車約 51 分</span><span>🚶 轉乘＋步行約 15 分</span><span class="total">⏱ 總計約 65–70 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  
+    <article class="card">
+      <div class="time">約 20:00 入住</div>
+      <h3>Incheon Airport Global Hotel & Suites</h3>
+      <div class="ko">인천공항 글로벌 호텔 & 스위트</div>
+      <div class="addr">인천 영종구 흰바위로59번길 8</div>
+      <div class="booking-info">
+  <span class="booking-id">Agoda 訂單編號 <b>1739268890</b></span>
+  <a class="booking-mail" href="https://mail.google.com/mail/#all/19ee0eeba545ed06" target="_blank" rel="noopener">開啟 Agoda 確認信 ↗</a>
+</div>
+      <div class="note">這晚就是睡覺，隔天一早去 T1。</div>
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Incheon%20Airport%20Global%20Hotel%20%26%20Suites%20Unseo">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/Incheon%20Airport%20Global%20Hotel%20%26%20Suites%20Unseo">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "인천 영종구 흰바위로59번길 8")'>複製地址</button>
+      </div>
+    </article>
+
+  <h3 class="section-title">整日路線地圖</h3>
+  <div class="map-card">
+      <div class="map-head">
+        <div><span class="eyebrow">LIVE MAP</span><h3>鐘路 → 清潭醫美 → 鐘路晚餐 → 雲西</h3></div>
+        <a class="btn routebtn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Blueduck%20hotel%20Seoul&destination=Incheon%20Airport%20Global%20Hotel%20%26%20Suites%20Unseo&waypoints=Oasis%20Cheongdam%7CLUNN%20Dermatology%20Cheongdam%7CGwangjang%20Market%7CSeoul%20Station">Google Maps 全日路線 ↗</a>
+      </div>
+      <div id="map-d4" class="day-map"></div>
+      <div class="map-note"><b style="color:#ffad63">橘色＝餐廳</b>、<b style="color:#75c9f4">藍色＝逛店</b>、<b style="color:#c9bfff">紫色房子＝飯店</b>。<b>飯店不列入序號</b>，每天從第一個實際行程點開始標 1 → 2 → 3…。若第 3 站是餐廳，主選標 <b>3</b>，備選標 <b>3-1／3-2</b>。虛線仍完整連接住宿與主行程。</div>
+    </div>
+</section>
+
+<section id="d5" class="panel">
+  <div class="dayhead"><h2>8/26（三）回台</h2><p>仁川機場第1航廈 → TPE T1<br>09:05 起飛</p></div><div class="transit">
+    <div class="transit-go flight">
+      <div class="transit-go-main">
+        <span class="transit-go-label">前往</span>
+        <span class="transit-go-dest">仁川機場第1航廈</span>
+        <span class="transit-go-sub">搭 7C6101 回台灣</span>
+        <div class="access-panel">
+  <div class="access-head"><span class="access-label">最近出口</span><span class="access-exit">A10 仁川機場第1航廈站 → 交通中心／T1</span></div>
+  <div class="access-facilities">
+    <span class="facility yes">↗ 手扶梯：有</span>
+    <span class="facility yes">🛗 電梯：有</span>
+  </div>
+  <div class="access-alt">這站不是一般街道式『幾號出口』；AREX 交通中心直接連航廈，站內配置有電梯與手扶梯，拖行李直接跟著 Terminal 1 指示走。</div>
+</div>
+      </div>
+      <a class="next-nav" href="nmap://route/public?dlat=37.460200&dlng=126.440700&dname=%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90&appname=https%3A//seoul-trip.local" data-fallback="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90" onclick="return openNaverNext(event,this)">NAVER 路線 ↗</a>
+    </div>
+    <div class="route-label">交通路線</div>
+    <div class="transit-row">
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a> <span class="arrow">→ A09 →</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川機場第1航廈"><b>A10</b><span>仁川機場第1航廈<small>인천공항1터미널</small></span></a>
+    </div>
+    <div class="triptime"><span>🚇 AREX 約 9 分</span><span>🚶 飯店／航廈步行約 10–12 分</span><span class="total">⏱ 總計約 20–25 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
+  </div>
+  <div class="meal-section"><h3>06:45–07:20 早餐｜仁川 T1 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 1</span><b>Paris Baguette T1</b></div>
+          <div class="meal-note">進 T1 後快速早餐。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>24 小時｜T1 3F Check-in G 附近</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>早餐三明治／香腸麵包，現場挑剛出爐款</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%ED%8C%8C%EB%A6%AC%EB%B0%94%EA%B2%8C%EB%9C%A8%20%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C1%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%ED%8C%8C%EB%A6%AC%EB%B0%94%EA%B2%8C%EB%9C%A8%20%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C1%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 2</span><b>Starbucks T1</b></div>
+          <div class="meal-note">咖啡＋輕食。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>公共區 B1 約 06:00–22:00；Gate 28 另有 24H 店</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>早餐三明治＋咖啡</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%8A%A4%ED%83%80%EB%B2%85%EC%8A%A4%20%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20T1">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%8A%A4%ED%83%80%EB%B2%85%EC%8A%A4%20%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20T1">Naver Map</a>
+          </div>
+        </div>
+        <div class="meal food">
+          <div class="meal-name"><span class="badge foodtag">餐廳</span><span class="badge alt">候選 3</span><b>Tous Les Jours T1</b></div>
+          <div class="meal-note">麵包早餐。</div><div class="store-info"><div class="info-row"><span class="info-label">營業</span><span>24 小時｜T1 3F Gate 30 附近（安檢後）</span></div><div class="info-row reco"><span class="info-label">推薦</span><span>可頌／三明治，選當日現場款</span></div></div>
+          <div class="actions compact">
+            <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%9A%9C%EB%A0%88%EC%A5%AC%EB%A5%B4%20%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C1%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90">Google Maps</a>
+            <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%9A%9C%EB%A0%88%EC%A5%AC%EB%A5%B4%20%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C1%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90">Naver Map</a>
+          </div>
+        </div></div></div>
+  <div class="card"><div class="time">09:05 → 10:55</div><h3>Jeju Air 7C6101</h3><div class="note">仁川 T1 出發 → 桃園 T1 抵達。</div></div>
+
+  <h3 class="section-title">整日路線地圖</h3>
+  <div class="map-card">
+      <div class="map-head">
+        <div><span class="eyebrow">LIVE MAP</span><h3>雲西 → 仁川機場第1航廈</h3></div>
+        <a class="btn routebtn" target="_blank" href="https://www.google.com/maps/dir/?api=1&origin=Unseo%20Station&destination=Incheon%20International%20Airport%20Terminal%201">Google Maps 全日路線 ↗</a>
+      </div>
+      <div id="map-d5" class="day-map"></div>
+      <div class="map-note"><b style="color:#ffad63">橘色＝餐廳</b>、<b style="color:#75c9f4">藍色＝逛店</b>、<b style="color:#c9bfff">紫色房子＝飯店</b>。<b>飯店不列入序號</b>，每天從第一個實際行程點開始標 1 → 2 → 3…。若第 3 站是餐廳，主選標 <b>3</b>，備選標 <b>3-1／3-2</b>。虛線仍完整連接住宿與主行程。</div>
+    </div>
+</section>
+
+<section id="places" class="panel">
+  <div class="dayhead"><h2>指定地點</h2><p>金色卡片<br>全部集中</p></div>
+  
+    <article class="card shop preferred">
+      <div class="time"></div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>STAND OIL Seongsu</h3>
+      <div class="ko">스탠드오일 성수</div>
+      <div class="addr">서울 성동구 연무장11길 19</div><div class="shop-detail"><div class="shop-row"><span class="shop-label">營業</span><span>每日 11:00–20:00</span></div><div class="shop-row"><span class="shop-label">品項</span><span>以女包為主，另有錢包、鞋款與配件；品牌主力多為非動物合成皮革包款。</span></div><div class="shop-row popular"><span class="shop-label">熱門逛</span><span>官網人氣系列先看 Oblong、Plump、Chubby、Post、Mushy；Oblong 是實用大容量代表款。</span></div></div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%8A%A4%ED%83%A0%EB%93%9C%EC%98%A4%EC%9D%BC%20%EC%84%B1%EC%88%98">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%8A%A4%ED%83%A0%EB%93%9C%EC%98%A4%EC%9D%BC%20%EC%84%B1%EC%88%98">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 연무장11길 19")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card shop preferred">
+      <div class="time"></div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>Verish Seongsu Flagship</h3>
+      <div class="ko">베리시 성수 플래그십 스토어</div>
+      <div class="addr">서울 성동구 연무장길 36</div><div class="shop-detail"><div class="shop-row"><span class="shop-label">營業</span><span>每日 11:00–20:00｜全年無休</span></div><div class="shop-row"><span class="shop-label">品項</span><span>無鋼圈內衣、機能內衣、平口／露肩款、內褲，以及延伸的 Feeling Wear／服飾。</span></div><div class="shop-row popular"><span class="shop-label">熱門逛</span><span>熱門先試 Cool Fit Bra Volume Fit、Cool Fit Bra Signature、Volume Fit Plus；夏天也可看 ICE ON 系列。</span></div></div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%B2%A0%EB%A6%AC%EC%8B%9C%20%EC%84%B1%EC%88%98%20%ED%94%8C%EB%9E%98%EA%B7%B8%EC%8B%AD%20%EC%8A%A4%ED%86%A0%EC%96%B4">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%B2%A0%EB%A6%AC%EC%8B%9C%20%EC%84%B1%EC%88%98%20%ED%94%8C%EB%9E%98%EA%B7%B8%EC%8B%AD%20%EC%8A%A4%ED%86%A0%EC%96%B4">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 연무장길 36")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card food preferred">
+      <div class="time"></div>
+      <h3><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span>JUUNEEDU Seoul Forest</h3>
+      <div class="ko">쥬니쥬 쇼룸 서울숲점</div>
+      <div class="addr">서울 성동구 서울숲2길 8-11</div><div class="shop-detail"><div class="shop-row"><span class="shop-label">營業</span><span>每日 12:00–20:00</span></div><div class="shop-row"><span class="shop-label">品項</span><span>睡衣／居家服為主，另有情侶款、Baby／Family、洗臉髮帶、拖鞋、圍裙與居家小物。</span></div><div class="shop-row popular"><span class="shop-label">熱門逛</span><span>先看 J'eu 7Days 縐棉睡衣系列；官網 Best 頁顯示經典 7Days 已累積超過 11 萬件。Flower 7Days、Daphne 系列與可愛洗臉髮帶也很熱門。</span></div></div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A5%AC%EB%8B%88%EC%A5%AC%20%EC%87%BC%EB%A3%B8%20%EC%84%9C%EC%9A%B8%EC%88%B2%EC%A0%90">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A5%AC%EB%8B%88%EC%A5%AC%20%EC%87%BC%EB%A3%B8%20%EC%84%9C%EC%9A%B8%EC%88%B2%EC%A0%90">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 서울숲2길 8-11")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card food preferred">
+      <div class="time"></div>
+      <h3><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span>無垢屋 聖水店</h3>
+      <div class="ko">무구옥 성수점</div>
+      <div class="addr">서울 성동구 아차산로11길 11</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%AC%B4%EA%B5%AC%EC%98%A5%20%EC%84%B1%EC%88%98%EC%A0%90">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%AC%B4%EA%B5%AC%EC%98%A5%20%EC%84%B1%EC%88%98%EC%A0%90">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 아차산로11길 11")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card food preferred">
+      <div class="time"></div>
+      <h3><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span>Jojo Kalguksu Seongsu</h3>
+      <div class="ko">조조칼국수 성수점</div>
+      <div class="addr">서울 성동구 성수일로8길 55</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A1%B0%EC%A1%B0%EC%B9%BC%EA%B5%AD%EC%88%98%20%EC%84%B1%EC%88%98%EC%A0%90">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A1%B0%EC%A1%B0%EC%B9%BC%EA%B5%AD%EC%88%98%20%EC%84%B1%EC%88%98%EC%A0%90">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 성동구 성수일로8길 55")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card food preferred">
+      <div class="time"></div>
+      <h3><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span>JO & DAWSON 光化門店</h3>
+      <div class="ko">조앤도슨 광화문점</div>
+      <div class="addr">서울 종로구 종로 33, 2층</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%A1%B0%EC%95%A4%EB%8F%84%EC%8A%A8%20%EA%B4%91%ED%99%94%EB%AC%B8%EC%A0%90">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%A1%B0%EC%95%A4%EB%8F%84%EC%8A%A8%20%EA%B4%91%ED%99%94%EB%AC%B8%EC%A0%90">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 종로구 종로 33, 2층")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card food preferred">
+      <div class="time"></div>
+      <h3><span class="badge foodtag">餐廳</span><span class="badge mine">指定</span>給豚的男人 本店</h3>
+      <div class="ko">돈주는남자 본점</div>
+      <div class="addr">서울 마포구 잔다리로6길 34-9</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%8F%88%EC%A3%BC%EB%8A%94%EB%82%A8%EC%9E%90%20%EB%B3%B8%EC%A0%90">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%8F%88%EC%A3%BC%EB%8A%94%EB%82%A8%EC%9E%90%20%EB%B3%B8%EC%A0%90">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 마포구 잔다리로6길 34-9")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card shop preferred">
+      <div class="time"></div>
+      <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>Olive Young Myeongdong Town</h3>
+      <div class="ko">올리브영 명동 타운</div>
+      <div class="addr">서울 중구 명동길 53</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EB%AA%85%EB%8F%99%20%ED%83%80%EC%9A%B4">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EB%AA%85%EB%8F%99%20%ED%83%80%EC%9A%B4">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 중구 명동길 53")'>複製地址</button>
+      </div>
+    </article>
+
+  <article class="card shop preferred">
+    <div class="time"></div>
+    <h3><span class="badge shoptag">逛店</span><span class="badge mine">指定</span>Olive Young Gwangjang Market</h3>
+    <div class="ko">올리브영 광장마켓점</div>
+    <div class="addr">서울 종로구 창경궁로 88 광장시장 2F</div>
+    <div class="shop-detail">
+      <div class="shop-row"><span class="shop-label">營業</span><span>約 10:00–22:00｜晚間當日再確認</span></div>
+      <div class="shop-row"><span class="shop-label">規模</span><span>約 806㎡／244 坪</span></div>
+      <div class="shop-row"><span class="shop-label">品項</span><span>K-Beauty 保養、彩妝、面膜、防曬、護髮與自然原料主題商品。</span></div>
+      <div class="shop-row popular"><span class="shop-label">熱門逛</span><span>自然原料策展、Personal Color／皮膚頭皮體驗、復古拍照區。</span></div>
+    </div>
+    <div class="actions">
+      <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EA%B4%91%EC%9E%A5%EB%A7%88%EC%BC%93%EC%A0%90">Google Maps</a>
+      <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EC%98%AC%EB%A6%AC%EB%B8%8C%EC%98%81%20%EA%B4%91%EC%9E%A5%EB%A7%88%EC%BC%93%EC%A0%90">Naver Map</a>
+      <button class="btn" onclick='copyText(this, "서울 종로구 창경궁로 88 광장시장 2F")'>複製地址</button>
+    </div>
+  </article>
+
+    
+  <h3 class="section-title">其他必要地點</h3>
+  
+    <article class="card">
+      <div class="time"></div>
+      <h3>Jongno Blue Duck Hotel</h3>
+      <div class="ko">블루덕호텔</div>
+      <div class="addr">서울 종로구 종로35길 10</div>
+      <div class="booking-info">
+  <span class="booking-id">Agoda 訂單編號 <b>1739266110</b></span>
+  <a class="booking-mail" href="https://mail.google.com/mail/#all/19ee0dc1403c532f" target="_blank" rel="noopener">開啟 Agoda 確認信 ↗</a>
+</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Blueduck%20hotel%2010%20Jong-ro%2035-gil%20Seoul">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/Blueduck%20hotel%2010%20Jong-ro%2035-gil%20Seoul">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 종로구 종로35길 10")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card">
+      <div class="time"></div>
+      <h3>LUNN Dermatology Cheongdam</h3>
+      <div class="ko">룬피부과 청담</div>
+      <div class="addr">서울 강남구 청담동 85-2, 5층</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=%EB%A3%AC%ED%94%BC%EB%B6%80%EA%B3%BC%20%EC%B2%AD%EB%8B%B4">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%A3%AC%ED%94%BC%EB%B6%80%EA%B3%BC%20%EC%B2%AD%EB%8B%B4">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "서울 강남구 청담동 85-2, 5층")'>複製地址</button>
+      </div>
+    </article>
+    
+  
+    <article class="card">
+      <div class="time"></div>
+      <h3>Incheon Airport Global Hotel & Suites</h3>
+      <div class="ko">인천공항 글로벌 호텔 & 스위트</div>
+      <div class="addr">인천 영종구 흰바위로59번길 8</div>
+      
+      <div class="actions">
+        <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Incheon%20Airport%20Global%20Hotel%20%26%20Suites%20Unseo">Google Maps</a>
+        <a class="btn" target="_blank" href="https://map.naver.com/p/search/Incheon%20Airport%20Global%20Hotel%20%26%20Suites%20Unseo">Naver Map</a>
+        <button class="btn" onclick='copyText(this, "인천 영종구 흰바위로59번길 8")'>複製地址</button>
+      </div>
+    </article>
+    
+</section>
+</main>
+</div>
+
+
+<div id="copyModal" class="copy-modal" onclick="if(event.target===this) closeCopyModal()">
+  <div class="copy-dialog" role="dialog" aria-modal="true" aria-labelledby="copyTitle">
+    <h3 id="copyTitle">複製地址</h3>
+    <p>若瀏覽器阻擋自動複製，這裡會自動全選；長按也可以手動複製。</p>
+    <textarea id="copyField" class="copy-field" readonly></textarea>
+    <div class="copy-dialog-actions">
+      <button class="btn" type="button" onclick="closeCopyModal()">關閉</button>
+      <button class="btn copy-ok" type="button" onclick="retryCopyFromModal(this)">再次複製</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">已複製</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+document.querySelectorAll('.meal-grid').forEach(grid=>{
+  const cards=[...grid.querySelectorAll('.meal')];
+  cards.forEach((card,i)=>{
+    card.setAttribute('aria-label', `候選 ${i+1} / ${cards.length}`);
+  });
+});
+
+</script>
+<script>
+
+function openNaverNext(event, el){
+  event.preventDefault();
+  const deep = el.getAttribute('href');
+  const fallback = el.dataset.fallback;
+
+  // NAVER's official mobile URL Scheme. If the app opens, the page is hidden.
+  let leftPage = false;
+  const onVisibility = () => {
+    if(document.hidden) leftPage = true;
+  };
+  document.addEventListener('visibilitychange', onVisibility, {once:true});
+
+  try{
+    window.location.href = deep;
+  }catch(e){}
+
+  // Some HTML viewers / browsers block custom schemes. In that case
+  // fall back to NAVER web search after a short delay.
+  setTimeout(()=>{
+    if(!leftPage && document.visibilityState === 'visible'){
+      window.open(fallback, '_blank');
+    }
+  }, 1100);
+
+  return false;
+}
+
+const ROUTES = {"d1":{"title":"抵達日｜仁川 T1 → 飯店 → 晚餐 → Olive Young → 飯店","points":[{"label":"1","name":"仁川機場第1航廈","lat":37.4602,"lng":126.4407,"time":"15:35","category":"other"},{"label":"2","name":"首爾站 A01 / 133","lat":37.5547,"lng":126.9707,"time":"轉乘","category":"other"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"約 18:00","category":"hotel"},{"label":"3","name":"陳玉華奶奶元祖一隻雞","lat":37.570374,"lng":127.00568,"time":"晚餐主選","category":"food"},{"label":"4","name":"Olive Young 廣藏市場","lat":37.57,"lng":126.9995,"time":"晚餐後","category":"shop"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"回飯店","category":"hotel"}],"groute":["Incheon International Airport Terminal 1","Seoul Station","Blueduck hotel Seoul","진옥화할매원조닭한마리","Olive Young Gwangjang Market","Blueduck hotel Seoul"]},"d2":{"title":"早餐 → 首爾林 → 聖水｜西往東走，避免折返","points":[{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"早上","category":"hotel"},{"label":"1","name":"Blue Duck Cafe","lat":37.57115,"lng":127.00585,"time":"早餐主選","category":"food"},{"label":"2","name":"首爾林 K211","lat":37.5437,"lng":127.0447,"time":"約 11:20","category":"other"},{"label":"3","name":"JUUNEEDU","lat":37.5467,"lng":127.0427,"time":"12:00","category":"shop"},{"label":"4","name":"Verish","lat":37.5425,"lng":127.0522,"time":"12:45","category":"shop"},{"label":"5","name":"無垢屋","lat":37.544,"lng":127.0565,"time":"午餐主選","category":"food"},{"label":"6","name":"STAND OIL","lat":37.5423,"lng":127.058,"time":"14:30","category":"shop"},{"label":"7","name":"Jojo Kalguksu","lat":37.5451,"lng":127.0538,"time":"晚餐主選","category":"food"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"回飯店","category":"hotel"}],"groute":["Blueduck hotel Seoul","Blueduck Cafe Seoul","Seoul Forest Station","JUUNEEDU Seoul Forest","Verish Seongsu","Muguok Seongsu","STAND OIL Seongsu","Jojo Kalguksu Seongsu","Blueduck hotel Seoul"]},"d3":{"title":"鐘路早餐 → 明洞 → 弘大｜一路往西","points":[{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"早上","category":"hotel"},{"label":"1","name":"JO & DAWSON","lat":37.5707,"lng":126.9829,"time":"早餐主選","category":"food"},{"label":"2","name":"Olive Young 明洞","lat":37.5638,"lng":126.985,"time":"10:00","category":"shop"},{"label":"3","name":"明洞餃子 本店","lat":37.5626,"lng":126.9857,"time":"午餐主選","category":"food"},{"label":"4","name":"弘大入口 239","lat":37.5563,"lng":126.9237,"time":"下午","category":"other"},{"label":"5","name":"給豚的男人","lat":37.5508,"lng":126.9206,"time":"晚餐主選","category":"food"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"回飯店","category":"hotel"}],"groute":["Blueduck hotel Seoul","JO & DAWSON Gwanghwamun","Olive Young Myeongdong Town","Myeongdong Kyoja Main Store","Hongik University Station","돈주는남자 본점","Blueduck hotel Seoul"]},"d4":{"title":"早餐 → 清潭醫美 → 鐘路晚餐 → 雲西","points":[{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"07:30","category":"hotel"},{"label":"1","name":"Oasis Cheongdam","lat":37.525,"lng":127.0384,"time":"早餐主選","category":"food"},{"label":"2","name":"LUNN Clinic","lat":37.5259,"lng":127.0409,"time":"10:30","category":"other"},{"label":"3","name":"陳玉華奶奶元祖一隻雞","lat":37.570374,"lng":127.00568,"time":"晚餐主選","category":"food"},{"label":"4","name":"首爾站 A01","lat":37.5547,"lng":126.9707,"time":"轉 AREX","category":"other"},{"label":"","name":"雲西 A08／機場飯店","lat":37.4932,"lng":126.4935,"time":"約 20:00","category":"hotel"}],"groute":["Blueduck hotel Seoul","Oasis Cheongdam","LUNN Dermatology Cheongdam","진옥화할매원조닭한마리","Seoul Station","Incheon Airport Global Hotel & Suites Unseo"]},"d5":{"title":"雲西 → 仁川 T1 → 機場早餐","points":[{"label":"","name":"雲西 A08／機場飯店","lat":37.4932,"lng":126.4935,"time":"06:00","category":"hotel"},{"label":"1","name":"A10 仁川機場第1航廈","lat":37.4602,"lng":126.4407,"time":"約 06:20","category":"other"},{"label":"2","name":"Paris Baguette T1","lat":37.45995,"lng":126.44095,"time":"早餐主選","category":"food"}],"groute":["Unseo Station","Incheon International Airport Terminal 1"]}};
+const maps = {};
+
+function showCopyToast(message='已複製'){
+  const t=document.getElementById('toast');
+  t.textContent=message;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1300);
+}
+
+function legacyCopy(text){
+  let ok=false;
+  const x=document.createElement('textarea');
+  x.value=text;
+  x.setAttribute('readonly','');
+  x.setAttribute('aria-hidden','true');
+  x.style.position='fixed';
+  x.style.left='0';
+  x.style.top='0';
+  x.style.width='2px';
+  x.style.height='2px';
+  x.style.opacity='0.01';
+  x.style.fontSize='16px';
+  document.body.appendChild(x);
+  x.focus({preventScroll:true});
+  x.select();
+  x.setSelectionRange(0, x.value.length);
+  try { ok=document.execCommand('copy'); } catch(e) { ok=false; }
+  document.body.removeChild(x);
+  return ok;
+}
+
+function openCopyModal(text){
+  const modal=document.getElementById('copyModal');
+  const field=document.getElementById('copyField');
+  field.value=text;
+  modal.classList.add('show');
+  setTimeout(()=>{
+    field.focus({preventScroll:true});
+    field.select();
+    field.setSelectionRange(0, field.value.length);
+  },60);
+}
+
+function closeCopyModal(){
+  document.getElementById('copyModal').classList.remove('show');
+}
+
+async function copyText(button, text){
+  let ok=false;
+
+  // 1) Modern Clipboard API. Some HTML viewers expose the API even when
+  // window.isSecureContext is false, so try it directly and catch rejection.
+  try{
+    if(navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+      await navigator.clipboard.writeText(text);
+      ok=true;
+    }
+  }catch(e){ ok=false; }
+
+  // 2) Older Safari / Android WebView fallback.
+  if(!ok) ok=legacyCopy(text);
+
+  if(ok){
+    showCopyToast('地址已複製');
+    if(button){
+      const old=button.textContent;
+      button.textContent='已複製 ✓';
+      button.disabled=true;
+      setTimeout(()=>{button.textContent=old;button.disabled=false;},1100);
+    }
+  }else{
+    // 3) Some file:// viewers intentionally block clipboard access.
+    // Show a selected text box so the user can long-press Copy.
+    openCopyModal(text);
+  }
+}
+
+async function retryCopyFromModal(button){
+  const field=document.getElementById('copyField');
+  const text=field.value;
+  let ok=false;
+  try{
+    if(navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+      await navigator.clipboard.writeText(text);
+      ok=true;
+    }
+  }catch(e){ ok=false; }
+  if(!ok) ok=legacyCopy(text);
+
+  if(ok){
+    showCopyToast('地址已複製');
+    closeCopyModal();
+  }else{
+    field.focus({preventScroll:true});
+    field.select();
+    field.setSelectionRange(0, field.value.length);
+    if(button) button.textContent='已全選，請長按複製';
+  }
+}
+
+
+const MEAL_CANDIDATES = {"d1":[{"label":"3-1","name":"順姬家綠豆煎餅","query":"순희네 빈대떡 광장시장 서울"},{"label":"3-2","name":"名人雪濃湯","query":"명인설렁탕 종로 서울"}],"d2":[{"label":"1-1","name":"EMMA Bakery","query":"엠마 종로5가 서울"},{"label":"1-2","name":"Wagle Wagle Bake Shop","query":"와글와글 베이크샵 을지로 서울"},{"label":"5-1","name":"Seongsu Darak","query":"성수다락 서울"},{"label":"5-2","name":"Schedule Seongsu","query":"스케줄 성수 서울"},{"label":"7-1","name":"Somunnan Seongsu Gamjatang","query":"소문난성수감자탕 서울"},{"label":"7-2","name":"Schedule Seongsu","query":"스케줄 성수 서울"}],"d3":[{"label":"1-1","name":"Cafe Mamas 光化門","query":"카페마마스 광화문 서울"},{"label":"1-2","name":"Gyeol by BEAN BROTHERS","query":"결 바이 빈브라더스 종로 서울"},{"label":"3-1","name":"河東館 明洞本店","query":"하동관 명동본점 서울"},{"label":"3-2","name":"The Sic-ddang 明洞","query":"더식당 명동 서울"},{"label":"5-1","name":"新美京弘大辣炒雞排","query":"신미경홍대닭갈비 서울"},{"label":"5-2","name":"新村食堂 弘大西橋店","query":"새마을식당 홍대서교점 서울"}],"d4":[{"label":"1-1","name":"Lot’s O Bagels","query":"라츠오베이글 압구정 서울"},{"label":"1-2","name":"Maison Jo Cheongdam","query":"메종조 청담 서울"},{"label":"3-1","name":"名人雪濃湯","query":"명인설렁탕 종로 서울"},{"label":"3-2","name":"順姬家綠豆煎餅","query":"순희네 빈대떡 광장시장 서울"}],"d5":[{"label":"2-1","name":"Starbucks T1","query":"스타벅스 인천공항 T1 인천"},{"label":"2-2","name":"Tous Les Jours T1","query":"뚜레쥬르 인천공항 제1여객터미널 인천"}]};
+const candidateLoadState = {};
+
+function markerIcon(label, category='other', candidate=false){
+  if(category==='hotel'){
+    return L.divIcon({
+      className:'',
+      html:`<div class="route-marker hotel" aria-label="飯店"><span class="house">⌂</span></div>`,
+      iconSize:[38,38],
+      iconAnchor:[19,19]
+    });
+  }
+  return L.divIcon({
+    className:'',
+    html:`<div class="route-marker ${category} ${candidate?'candidate':''}">${label}</div>`,
+    iconSize:[46,34],
+    iconAnchor:[23,17]
+  });
+}
+
+function naverSearchUrl(query){
+  return 'https://map.naver.com/p/search/' + encodeURIComponent(query);
+}
+
+function getGeoCache(){
+  try{ return JSON.parse(localStorage.getItem('seoulV14GeoCache')||'{}'); }
+  catch(e){ return {}; }
+}
+function saveGeoCache(cache){
+  try{ localStorage.setItem('seoulV14GeoCache',JSON.stringify(cache)); }catch(e){}
+}
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+async function geocodeCandidate(item){
+  const cache=getGeoCache();
+  if(cache[item.query]) return cache[item.query];
+
+  const url='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=kr&accept-language=ko&q='+encodeURIComponent(item.query);
+  try{
+    const res=await fetch(url,{headers:{'Accept':'application/json'}});
+    if(!res.ok) return null;
+    const data=await res.json();
+    if(!data || !data.length) return null;
+    const pos={lat:Number(data[0].lat),lng:Number(data[0].lon)};
+    if(Number.isFinite(pos.lat)&&Number.isFinite(pos.lng)){
+      cache[item.query]=pos;
+      saveGeoCache(cache);
+      return pos;
+    }
+  }catch(e){}
+  return null;
+}
+
+async function addCandidateMarkers(day,m,allLatLngs){
+  if(candidateLoadState[day]) return;
+  candidateLoadState[day]=true;
+  const list=MEAL_CANDIDATES[day]||[];
+  const duplicateCount={};
+
+  for(let i=0;i<list.length;i++){
+    const item=list[i];
+    const pos=await geocodeCandidate(item);
+    if(pos){
+      duplicateCount[item.query]=(duplicateCount[item.query]||0)+1;
+      const dup=duplicateCount[item.query]-1;
+      // If the same restaurant appears in two meal slots, offset by only a few metres
+      // so both labels remain readable without changing the practical location.
+      const lat=pos.lat + dup*0.000045;
+      const lng=pos.lng + dup*0.000045;
+
+      const marker=L.marker([lat,lng],{icon:markerIcon(item.label,'food',true)}).addTo(m);
+      marker.bindPopup(
+        `<b>${item.label}. ${item.name}</b><br>`+
+        `<span style="color:#ffb36e">三選一候選餐廳</span><br>`+
+        `<a href="${naverSearchUrl(item.query)}" target="_blank" rel="noopener" style="color:#8fdcff">Naver Map ↗</a>`
+      );
+      allLatLngs.push([lat,lng]);
+    }
+    // Public geocoder friendly pacing; cached entries return instantly next time.
+    if(i<list.length-1) await sleep(1050);
+  }
+
+  if(allLatLngs.length>1){
+    m.fitBounds(allLatLngs,{padding:[38,38],maxZoom:15});
+  }
+}
+
+function initMap(day){
+  if(maps[day] || !ROUTES[day] || typeof L==='undefined') return;
+  const el=document.getElementById('map-'+day);
+  if(!el) return;
+
+  const m=L.map(el,{zoomControl:true,attributionControl:true});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    maxZoom:20,
+    attribution:'&copy; OpenStreetMap &copy; CARTO'
+  }).addTo(m);
+
+  const routeLatLngs=[];
+  const allLatLngs=[];
+
+  const hotelGroups={};
+
+  ROUTES[day].points.forEach((p,i)=>{
+    const label=p.label || String(i+1);
+
+    // Route line always keeps every visit, even when a hotel is visited twice.
+    routeLatLngs.push([p.lat,p.lng]);
+    allLatLngs.push([p.lat,p.lng]);
+
+    // Merge repeated hotel markers at the same coordinate into one house icon.
+    if(p.category==='hotel'){
+      const key=`${p.lat.toFixed(5)},${p.lng.toFixed(5)}`;
+      if(!hotelGroups[key]){
+        hotelGroups[key]={point:p, labels:[]};
+      }
+      if(label) hotelGroups[key].labels.push(label);
+      return;
+    }
+
+    const marker=L.marker([p.lat,p.lng],{
+      icon:markerIcon(label,p.category||'other',false)
+    }).addTo(m);
+
+    const typeText=p.category==='food'
+      ? (!String(label).includes('-') ? '三選一｜主選餐廳' : '餐廳')
+      : p.category==='shop' ? '逛店' : '行程點';
+
+    marker.bindPopup(
+      `<b>${label}. ${p.name}</b><br>`+
+      `<span style="color:#aab3c0">${p.time||''}</span><br>`+
+      `<span style="color:${p.category==='food'?'#ff9aa1':p.category==='shop'?'#80d8ff':'#aab3c0'}">${typeText}</span>`
+    );
+  });
+
+  Object.values(hotelGroups).forEach(group=>{
+    const p=group.point;
+    const marker=L.marker([p.lat,p.lng],{
+      icon:markerIcon('', 'hotel', false),
+      zIndexOffset:650
+    }).addTo(m);
+
+    marker.bindPopup(
+      `<b>⌂ ${p.name}</b><br>`+
+      `<span style="color:#c9bfff">住宿點</span><br>`+
+      `<span style="color:#aab3c0">飯店不列入當日行程序號</span>`
+    );
+  });
+
+  L.polyline(routeLatLngs,{color:'#8ec5ff',weight:4,opacity:.72,dashArray:'9 9'}).addTo(m);
+  m.fitBounds(routeLatLngs,{padding:[35,35],maxZoom:14});
+  maps[day]=m;
+
+  setTimeout(()=>m.invalidateSize(),100);
+  addCandidateMarkers(day,m,allLatLngs);
+}
+
+const tabs=[...document.querySelectorAll('.tab')];
+const panels=[...document.querySelectorAll('.panel')];
+function showPanel(id){
+  tabs.forEach(x=>x.classList.toggle('active',x.dataset.target===id));
+  panels.forEach(x=>x.classList.toggle('active',x.id===id));
+  localStorage.setItem('seoulV14Tab',id);
+  if(ROUTES[id]) setTimeout(()=>{initMap(id); if(maps[id]) maps[id].invalidateSize();},80);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+tabs.forEach(b=>b.addEventListener('click',()=>showPanel(b.dataset.target)));
+const saved=localStorage.getItem('seoulV14Tab');
+if(saved && document.getElementById(saved)) showPanel(saved);
+</script>
+</body>
+</html>

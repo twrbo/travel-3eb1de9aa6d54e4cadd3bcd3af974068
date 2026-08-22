@@ -64,7 +64,7 @@ a{color:inherit}
 .transit-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .arrow{color:#8f9baa;font-weight:500}
 .station{display:inline-flex;align-items:center;gap:6px;color:white;border-radius:11px;padding:5px 8px;font-size:11px;font-weight:800;text-shadow:0 1px 1px rgba(0,0,0,.32),0 0 2px rgba(0,0,0,.22)}
-.station>b{font-size:15px;padding-right:7px;border-right:1px solid rgba(255,255,255,.35)} .station span{line-height:1.08} .station small{display:block;font-size:9px;opacity:.83;margin-top:2px} .station-line{display:block;margin-top:3px;font-size:9px;font-style:normal;font-weight:700;line-height:1.1;opacity:.95}
+.station>b{font-size:15px;padding-right:7px;border-right:1px solid rgba(255,255,255,.35)} .station span{line-height:1.08} .station-en{display:block;font-size:9px;font-weight:700;letter-spacing:.01em;opacity:.9;margin-top:2px} .station small{display:block;font-size:9px;opacity:.83;margin-top:2px} .station-line{display:block;margin-top:3px;font-size:9px;font-style:normal;font-weight:700;line-height:1.1;opacity:.95}
 .line1{background:#0052a4} .line2{background:#009d3e} .arex{background:#0090d2} .sb{background:#f5a200;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.28)} .sb>b{border-color:rgba(255,255,255,.35)}
 .meal-section{margin:18px 0} .meal-section>h3{font-size:17px;margin:0 2px 8px}
 .meal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
@@ -739,6 +739,16 @@ body{
   font-size:11px;
   font-weight:400 !important;
 }
+.transit-row .station.direction{
+  border:1px dashed rgba(255,255,255,.55);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);
+}
+.transit-row .station.direction b{
+  font-size:9px;
+  padding-right:6px;
+  letter-spacing:.05em;
+}
+.transit-row .station.direction small{letter-spacing:.02em;}
 
 /* Time is summarized in one compact strip. */
 .triptime{
@@ -1192,9 +1202,11 @@ body{
     </div>
     <div class="route-label">交通路線</div>
     <div class="transit-row">
-      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川機場第1航廈"><b>A10</b><span>仁川機場第1航廈<small>인천공항1터미널</small></span></a> <span class="arrow">→</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川機場第1航廈"><b>A10</b><span>仁川機場第1航廈<small>인천공항1터미널</small></span></a>
+      <a class="station arex direction" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD" target="_blank" rel="noopener" title="AREX 往首爾站方向"><b>方向</b><span>往 首爾站<small>서울역 방면</small></span></a> <span class="arrow">→</span>
       <a class="station arex" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EA%B3%B5%ED%95%AD%EC%B2%A0%EB%8F%84" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>A01</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">轉 1 號線</span>
-      <a class="station line1" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>133</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">→ 4 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>133</b><span>首爾站<small>서울역</small></span></a>
+      <a class="station line1 direction" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="1 號線往清涼里方向"><b>方向</b><span>往 清涼里<small>청량리 방면</small></span></a> <span class="arrow">→ 4 站</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
     </div>
     <div class="triptime"><span>🚇 搭車約 68 分</span><span>🚶 轉乘＋步行約 15 分</span><span class="total">⏱ 總計約 80–90 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
@@ -1381,6 +1393,7 @@ body{
     <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener">
       <b>129</b><span>鐘路五街<small>종로5가</small></span>
     </a>
+    <a class="station line1 direction" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="1 號線往清涼里方向"><b>方向</b><span>往 清涼里<small>청량리 방면</small></span></a>
     <span class="arrow">→ 5 站</span>
     <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener">
       <b>124</b><span>清涼里<small>청량리</small></span>
@@ -1389,6 +1402,7 @@ body{
     <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener">
       <b>K209</b><span>清涼里<small>청량리</small></span>
     </a>
+    <a class="station sb direction" href="https://map.naver.com/p/search/%EC%99%95%EC%8B%AD%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="水仁盆唐線經往十里、往水原／仁川方向"><b>方向</b><span>往 往十里<small>왕십리 경유 · 수원／인천 방면</small></span></a>
     <span class="arrow">→ 2 站</span>
     <a class="station sb" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD" target="_blank" rel="noopener">
       <b>K211</b><span>首爾林<small>서울숲</small></span>
@@ -1515,9 +1529,11 @@ body{
     </div>
     <div class="route-label">交通路線</div>
     <div class="transit-row">
-      <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small></span></a> <span class="arrow">支線 →</span>
+      <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small></span></a>
+      <a class="station line2 direction" href="https://map.naver.com/p/search/%EC%8B%A0%EC%84%A4%EB%8F%99%EC%97%AD" target="_blank" rel="noopener" title="2 號線支線往新設洞方向"><b>方向</b><span>往 新設洞<small>신설동 방면</small></span></a> <span class="arrow">支線 →</span>
       <a class="station line2" href="https://map.naver.com/p/search/%EC%8B%A0%EC%84%A4%EB%8F%99%EC%97%AD%202%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 新設洞"><b>211-4</b><span>新設洞<small>신설동</small></span></a> <span class="arrow">轉 1 號線</span>
-      <a class="station line1" href="https://map.naver.com/p/search/%EC%8B%A0%EC%84%A4%EB%8F%99%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 新設洞"><b>126</b><span>新設洞<small>신설동</small></span></a> <span class="arrow">→ 3 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%8B%A0%EC%84%A4%EB%8F%99%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 新設洞"><b>126</b><span>新設洞<small>신설동</small></span></a>
+      <a class="station line1 direction" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD" target="_blank" rel="noopener" title="1 號線往首爾站方向"><b>方向</b><span>往 首爾站<small>서울역 방면</small></span></a> <span class="arrow">→ 3 站</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
     </div>
     <div class="triptime"><span>🚇 搭車約 18 分</span><span>🚶 轉乘＋步行約 10 分</span><span class="total">⏱ 總計約 25–30 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
@@ -1693,6 +1709,7 @@ body{
       <a class="station line2" href="https://map.naver.com/p/search/%EC%8B%9C%EC%B2%AD%EC%97%AD%202%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 市廳"><b>201</b><span>市廳<small>시청</small></span></a>
       <span class="arrow">轉 1 號線</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%8B%9C%EC%B2%AD%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 市廳"><b>132</b><span>市廳<small>시청</small></span></a>
+      <a class="station line1 direction" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="1 號線往清涼里方向"><b>方向</b><span>往 清涼里<small>청량리 방면</small></span></a>
       <span class="arrow">→ 3 站</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
     </div>
@@ -1735,9 +1752,11 @@ body{
     </div>
     <div class="route-label">交通路線</div>
     <div class="transit-row">
-      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a> <span class="arrow">→ 5 站</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
+      <a class="station line1 direction" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="1 號線往清涼里方向"><b>方向</b><span>往 清涼里<small>청량리 방면</small></span></a> <span class="arrow">→ 5 站</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">轉 水仁盆唐</span>
-      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">→ 3 站</span>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a>
+      <a class="station sb direction" href="https://map.naver.com/p/search/%EC%99%95%EC%8B%AD%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="水仁盆唐線經往十里、往水原／仁川方向"><b>方向</b><span>往 往十里<small>왕십리 경유 · 수원／인천 방면</small></span></a> <span class="arrow">→ 3 站</span>
       <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a>
     </div>
     <div class="triptime"><span>🚇 搭車約 25 分</span><span>🚶 轉乘＋步行約 15 分</span><span class="total">⏱ 總計約 40–45 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
@@ -1801,9 +1820,11 @@ body{
     </div>
     <div class="route-label">交通路線</div>
     <div class="transit-row">
-      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a> <span class="arrow">→</span>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a>
+      <a class="station sb direction" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="水仁盆唐線往清涼里方向"><b>方向</b><span>往 清涼里<small>청량리 방면</small></span></a> <span class="arrow">→</span>
       <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">轉 1 號線</span>
-      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a> <span class="arrow">→</span>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a>
+      <a class="station line1 direction" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD" target="_blank" rel="noopener" title="1 號線往首爾站方向"><b>方向</b><span>往 首爾站<small>서울역 방면</small></span></a> <span class="arrow">→</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
     </div>
     <div class="triptime"><span>🚇 搭車約 25 分</span><span>🚶 轉乘＋步行約 12 分</span><span class="total">⏱ 總計約 35–40 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
@@ -1870,7 +1891,8 @@ body{
     <div class="transit-row">
       <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a> <span class="arrow">→</span>
       <a class="station line1" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%201%ED%98%B8%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>133</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">轉 AREX</span>
-      <a class="station arex" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EA%B3%B5%ED%95%AD%EC%B2%A0%EB%8F%84" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>A01</b><span>首爾站<small>서울역</small></span></a> <span class="arrow">一般列車 →</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%97%AD%20%EA%B3%B5%ED%95%AD%EC%B2%A0%EB%8F%84" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾站"><b>A01</b><span>首爾站<small>서울역</small></span></a>
+      <a class="station arex direction" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="AREX 一般列車往仁川機場第 1 航廈方向"><b>方向</b><span>往 仁川機場 T1<small>인천공항1터미널 방면</small></span></a> <span class="arrow">一般列車 →</span>
       <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a>
     </div>
     <div class="triptime"><span>🚇 搭車約 51 分</span><span>🚶 轉乘＋步行約 15 分</span><span class="total">⏱ 總計約 65–70 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
@@ -1924,7 +1946,8 @@ body{
     </div>
     <div class="route-label">交通路線</div>
     <div class="transit-row">
-      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a> <span class="arrow">→ A09 →</span>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a>
+      <a class="station arex direction" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="AREX 往仁川機場第 1 航廈方向"><b>方向</b><span>往 仁川機場 T1<small>인천공항1터미널 방면</small></span></a> <span class="arrow">→ A09 →</span>
       <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川機場第1航廈"><b>A10</b><span>仁川機場第1航廈<small>인천공항1터미널</small></span></a>
     </div>
     <div class="triptime"><span>🚇 AREX 約 9 分</span><span>🚶 飯店／航廈步行約 10–12 分</span><span class="total">⏱ 總計約 20–25 分</span><small>平常時段估算，不含等車；現場以 Naver Map / Google Maps 即時路線為準。</small></div>
@@ -2176,6 +2199,42 @@ document.querySelectorAll('.meal-grid').forEach(grid=>{
 
 </script>
 <script>
+
+// Keep every station chip readable against Korean platform signs: Chinese / English / Korean.
+const STATION_ENGLISH = {
+  '鐘路五街':'Jongno 5-ga',
+  '清涼里':'Cheongnyangni',
+  '首爾林':'Seoul Forest',
+  '狎鷗亭羅德奧':'Apgujeong Rodeo',
+  '聖水':'Seongsu',
+  '弘大入口':'Hongik Univ.',
+  '雲西':'Unseo',
+  '仁川 T1':"Incheon Airport T1",
+  '仁川機場第1航廈':"Incheon Airport T1",
+  '首爾站':'Seoul Station',
+  '新設洞':'Sinseol-dong',
+  '鐘閣':'Jonggak',
+  '乙支路入口':'Euljiro 1-ga',
+  '市廳':'City Hall',
+  '往 首爾站':'Toward Seoul Station',
+  '往 清涼里':'Toward Cheongnyangni',
+  '往 往十里':'Toward Wangsimni',
+  '往 新設洞':'Toward Sinseol-dong',
+  '往 仁川機場 T1':'Toward Incheon Airport T1'
+};
+
+document.querySelectorAll('.station > span').forEach((stationText) => {
+  const nameNode = [...stationText.childNodes].find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+  const name = nameNode?.textContent.trim();
+  const englishName = STATION_ENGLISH[name];
+  if (!englishName || stationText.querySelector('.station-en')) return;
+
+  const english = document.createElement('span');
+  english.className = 'station-en';
+  english.textContent = englishName;
+  const korean = stationText.querySelector('small');
+  stationText.insertBefore(english, korean || null);
+});
 
 function openNaverNext(event, el){
   event.preventDefault();

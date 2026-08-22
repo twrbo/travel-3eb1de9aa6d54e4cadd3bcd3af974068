@@ -2374,29 +2374,30 @@ async function addCandidateMarkers(day,m,allLatLngs){
   if(candidateLoadState[day]) return;
   candidateLoadState[day]=true;
   const list=MEAL_CANDIDATES[day]||[];
-  const duplicateCount={};
 
   for(let i=0;i<list.length;i++){
     const item=list[i];
-    const pos=await geocodeCandidate(item);
-    if(pos){
-      duplicateCount[item.query]=(duplicateCount[item.query]||0)+1;
-      const dup=duplicateCount[item.query]-1;
-      // If the same restaurant appears in two meal slots, offset by only a few metres
-      // so both labels remain readable without changing the practical location.
-      const lat=pos.lat + dup*0.000045;
-      const lng=pos.lng + dup*0.000045;
+    const [baseLabel,choiceLabel]=String(item.label).split('-');
+    const anchor=ROUTES[day].points.find(p=>String(p.label)===baseLabel);
+    if(!anchor) continue;
 
-      const marker=L.marker([lat,lng],{icon:markerIcon(item.label,'food',true)}).addTo(m);
-      marker.bindPopup(
-        `<b>${item.label}. ${item.name}</b><br>`+
-        `<span style="color:#ffb36e">三選一候選餐廳</span><br>`+
-        `<a href="${naverSearchUrl(item.query)}" target="_blank" rel="noopener" style="color:#8fdcff">Naver Map ↗</a>`
-      );
-      allLatLngs.push([lat,lng]);
-    }
-    // Public geocoder friendly pacing; cached entries return instantly next time.
-    if(i<list.length-1) await sleep(1050);
+    // Candidate pins must never depend on an external geocoder. Position each option
+    // beside its primary meal point, so labels such as 3-1 / 3-2 always render.
+    const group=list.filter(x=>String(x.label).split('-')[0]===baseLabel);
+    const choiceIndex=Math.max(0,group.findIndex(x=>x.label===item.label));
+    const angle=(-Math.PI/2)+(choiceIndex*Math.PI*2/Math.max(group.length,1));
+    const radius=0.00115;
+    const lat=anchor.lat + Math.sin(angle)*radius;
+    const lng=anchor.lng + Math.cos(angle)*radius*1.28;
+
+    const marker=L.marker([lat,lng],{icon:markerIcon(item.label,'food',true)}).addTo(m);
+    marker.bindPopup(
+      `<b>${item.label}. ${item.name}</b><br>`+
+      `<span style="color:#ffb36e">三選一候選餐廳</span><br>`+
+      `<span style="color:#aab3c0">標籤位置依主選餐廳附近排列；請點 Naver Map 開啟精確店址。</span><br>`+
+      `<a href="${naverSearchUrl(item.query)}" target="_blank" rel="noopener" style="color:#8fdcff">Naver Map ↗</a>`
+    );
+    allLatLngs.push([lat,lng]);
   }
 
   if(allLatLngs.length>1){

@@ -64,7 +64,7 @@ a{color:inherit}
 .transit-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
 .arrow{color:#8f9baa;font-weight:500}
 .station{display:inline-flex;align-items:center;gap:6px;color:white;border-radius:11px;padding:5px 8px;font-size:11px;font-weight:800;text-shadow:0 1px 1px rgba(0,0,0,.32),0 0 2px rgba(0,0,0,.22)}
-.station>b{font-size:15px;padding-right:7px;border-right:1px solid rgba(255,255,255,.35)} .station span{line-height:1.08} .station small{display:block;font-size:9px;opacity:.83;margin-top:2px}
+.station>b{font-size:15px;padding-right:7px;border-right:1px solid rgba(255,255,255,.35)} .station span{line-height:1.08} .station small{display:block;font-size:9px;opacity:.83;margin-top:2px} .station-line{display:block;margin-top:3px;font-size:9px;font-style:normal;font-weight:700;line-height:1.1;opacity:.95}
 .line1{background:#0052a4} .line2{background:#009d3e} .arex{background:#0090d2} .sb{background:#f5a200;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.28)} .sb>b{border-color:rgba(255,255,255,.35)}
 .meal-section{margin:18px 0} .meal-section>h3{font-size:17px;margin:0 2px 8px}
 .meal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
@@ -1106,15 +1106,15 @@ body{
   <h3 class="section-title">最常用站號</h3>
   <div class="card">
     <div class="transit-row">
-      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small></span></a>
-      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small></span></a>
-      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small></span></a>
-      <a class="station sb" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾林"><b>K211</b><span>首爾林<small>서울숲</small></span></a>
-      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small></span></a>
-      <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small></span></a>
-      <a class="station line2" href="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 弘大入口"><b>239</b><span>弘大入口<small>홍대입구</small></span></a>
-      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small></span></a>
-      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川 T1"><b>A10</b><span>仁川 T1<small>인천공항1터미널</small></span></a>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%A2%85%EB%A1%9C5%EA%B0%80%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 鐘路五街"><b>129</b><span>鐘路五街<small>종로5가</small><em class="station-line">1號線</em></span></a>
+      <a class="station line1" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>124</b><span>清涼里<small>청량리</small><em class="station-line">1號線</em></span></a>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%B2%AD%EB%9F%89%EB%A6%AC%EC%97%AD%20%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0" target="_blank" rel="noopener" title="在 Naver Map 開啟 清涼里"><b>K209</b><span>清涼里<small>청량리</small><em class="station-line">水仁盆唐線</em></span></a>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 首爾林"><b>K211</b><span>首爾林<small>서울숲</small><em class="station-line">水仁盆唐線</em></span></a>
+      <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small><em class="station-line">水仁盆唐線</em></span></a>
+      <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small><em class="station-line">2號線</em></span></a>
+      <a class="station line2" href="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 弘大入口"><b>239</b><span>弘大入口<small>홍대입구</small><em class="station-line">2號線</em></span></a>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small><em class="station-line">機場鐵路 AREX</em></span></a>
+      <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川 T1"><b>A10</b><span>仁川 T1<small>인천공항1터미널</small><em class="station-line">機場鐵路 AREX</em></span></a>
     </div>
   </div>
 

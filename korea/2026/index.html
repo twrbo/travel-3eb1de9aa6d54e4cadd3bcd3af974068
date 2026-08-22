@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090b10">
-<title>首爾 2026｜8/22–8/26 連線地圖版 v32</title>
+<title>首爾 2026｜8/22–8/26 連線地圖版 v33</title>
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
 <link rel="preconnect" href="https://unpkg.com">
@@ -65,7 +65,7 @@ a{color:inherit}
 .arrow{color:#8f9baa;font-weight:500}
 .station{display:inline-flex;align-items:center;gap:6px;color:white;border-radius:11px;padding:5px 8px;font-size:11px;font-weight:800;text-shadow:0 1px 1px rgba(0,0,0,.32),0 0 2px rgba(0,0,0,.22)}
 .station>b{font-size:15px;padding-right:7px;border-right:1px solid rgba(255,255,255,.35)} .station span{line-height:1.08} .station-en{display:block;font-size:9px;font-weight:700;letter-spacing:.01em;opacity:.9;margin-top:2px} .station small{display:block;font-size:9px;opacity:.83;margin-top:2px} .station-line{display:block;margin-top:3px;font-size:9px;font-style:normal;font-weight:700;line-height:1.1;opacity:.95}
-.line1{background:#0052a4} .line2{background:#009d3e} .arex{background:#0090d2} .sb{background:#f5a200;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.28)} .sb>b{border-color:rgba(255,255,255,.35)}
+.line1{background:#0052a4} .line2{background:#009d3e} .line4{background:#00a4e3} .arex{background:#0090d2} .sb{background:#f5a200;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.28)} .sb>b{border-color:rgba(255,255,255,.35)}
 .meal-section{margin:18px 0} .meal-section>h3{font-size:17px;margin:0 2px 8px}
 .meal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .meal{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:12px;min-height:147px}
@@ -1092,7 +1092,7 @@ body{
 
 <header class="hero">
   <h1>✨ 首爾醫美吃吃喝喝快閃5日行 🧴🍜🛍️</h1>
-  <div class="hero-subtitle">2026/08/22–08/26｜ v32</div>
+  <div class="hero-subtitle">2026/08/22–08/26｜ v33</div>
   <div class="legend">
     <span class="mine">金色＝指定</span>
     <span style="border-color:#8a4b1b;color:#ffc58f">橘色＝餐廳</span>
@@ -1123,6 +1123,7 @@ body{
       <a class="station sb" href="https://map.naver.com/p/search/%EC%95%95%EA%B5%AC%EC%A0%95%EB%A1%9C%EB%8D%B0%EC%98%A4%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 狎鷗亭羅德奧"><b>K212</b><span>狎鷗亭羅德奧<small>압구정로데오</small><em class="station-line">水仁盆唐線</em></span></a>
       <a class="station line2" href="https://map.naver.com/p/search/%EC%84%B1%EC%88%98%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 聖水"><b>211</b><span>聖水<small>성수</small><em class="station-line">2號線</em></span></a>
       <a class="station line2" href="https://map.naver.com/p/search/%ED%99%8D%EB%8C%80%EC%9E%85%EA%B5%AC%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 弘大入口"><b>239</b><span>弘大入口<small>홍대입구</small><em class="station-line">2號線</em></span></a>
+      <a class="station line4" href="https://map.naver.com/p/search/%EB%AA%85%EB%8F%99%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 明洞"><b>424</b><span>明洞<small>명동</small><em class="station-line">4號線</em></span></a>
       <a class="station arex" href="https://map.naver.com/p/search/%EC%9A%B4%EC%84%9C%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 雲西"><b>A08</b><span>雲西<small>운서</small><em class="station-line">機場鐵路 AREX</em></span></a>
       <a class="station arex" href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B3%B5%ED%95%AD1%ED%84%B0%EB%AF%B8%EB%84%90%EC%97%AD" target="_blank" rel="noopener" title="在 Naver Map 開啟 仁川 T1"><b>A10</b><span>仁川 T1<small>인천공항1터미널</small><em class="station-line">機場鐵路 AREX</em></span></a>
     </div>
@@ -1235,6 +1236,22 @@ body{
         <button class="btn" onclick='copyText(this, "서울 종로구 종로35길 10")'>複製地址</button>
       </div>
     </article>
+
+  <article class="card shop preferred">
+    <div class="time">今晚優先｜入住後立刻前往</div>
+    <h3><span class="badge shoptag">換錢</span><span class="badge mine">建議</span>Money Box 明洞本店</h3>
+    <div class="ko">머니박스 명동본점</div>
+    <div class="addr">서울 중구 남대문로 52-1</div>
+    <div class="store-info">
+      <div class="info-row"><span class="info-label">今晚營業</span><span>週末 10:00–21:00；建議最晚 20:30 前到店</span></div>
+      <div class="info-row reco"><span class="info-label">怎麼去</span><span>為趕 21:00 收店，入住後直接用 Naver Map 叫車前往；換完再回鐘路／廣藏市場吃晚餐。</span></div>
+    </div>
+    <div class="note">到櫃檯先確認當日 TWD → KRW 匯率與現鈔金額；店內匯率會隨時間變動。</div>
+    <div class="actions">
+      <a class="btn primary" target="_blank" href="https://www.google.com/maps/search/?api=1&amp;query=Money%20Box%20Myeongdong%20Main%20Branch">Google Maps</a>
+      <a class="btn" target="_blank" href="https://map.naver.com/p/search/%EB%A8%B8%EB%8B%88%EB%B0%95%EC%8A%A4%20%EB%AA%85%EB%8F%99%EB%B3%B8%EC%A0%90">Naver Map</a>
+    </div>
+  </article>
     
   <div class="meal-section"><h3>晚餐｜附近 3 選 1</h3><div class="swipe-hint"><strong>3 間候選</strong><span>左右滑動查看</span></div><div class="meal-grid">
         <div class="meal food">
@@ -2216,6 +2233,7 @@ const STATION_ENGLISH = {
   '鐘閣':'Jonggak',
   '乙支路入口':'Euljiro 1-ga',
   '市廳':'City Hall',
+  '明洞':'Myeongdong',
   '往 首爾站':'Toward Seoul Station',
   '往 清涼里':'Toward Cheongnyangni',
   '往 往十里':'Toward Wangsimni',

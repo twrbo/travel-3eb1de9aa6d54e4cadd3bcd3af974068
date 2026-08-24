@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#090b10">
-<title>首爾 2026｜8/22–8/26 連線地圖版 v47</title>
+<title>首爾 2026｜8/22–8/26 連線地圖版 v48</title>
 <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
 <link rel="preconnect" href="https://unpkg.com">
@@ -1092,7 +1092,7 @@ body{
 
 <header class="hero">
   <h1>✨ 首爾醫美吃吃喝喝快閃5日行 🧴🍜🛍️</h1>
-  <div class="hero-subtitle">2026/08/22–08/26｜ v47</div>
+  <div class="hero-subtitle">2026/08/22–08/26｜ v48</div>
   <div class="legend">
     <span class="mine">金色＝指定</span>
     <span style="border-color:#8a4b1b;color:#ffc58f">橘色＝餐廳</span>
@@ -2251,10 +2251,7 @@ document.querySelectorAll('.station > span').forEach((stationText) => {
 // Day 3 starts with pork soup; breakfast choices are intentionally hidden.
 document.querySelector('#d3 .meal-section')?.remove();
 
-function openNaverNext(event, el){
-  event.preventDefault();
-  const deep = el.getAttribute('href');
-  const fallback = el.dataset.fallback;
+function openNaverDeepLink(deep, fallback){
 
   // NAVER's official mobile URL Scheme. If the app opens, the page is hidden.
   let leftPage = false;
@@ -2279,6 +2276,29 @@ function openNaverNext(event, el){
 
   return false;
 }
+
+function openNaverNext(event, el){
+  event.preventDefault();
+  return openNaverDeepLink(el.getAttribute('href'), el.dataset.fallback);
+}
+
+function openNaverSearch(event, el){
+  if(event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const fallback = el.href;
+  const url = new URL(fallback);
+  const query = decodeURIComponent(url.pathname.replace('/p/search/', ''));
+  if(!query) return;
+  event.preventDefault();
+  const deep = `nmap://search?query=${encodeURIComponent(query)}&appname=https%3A%2F%2Fseoul-trip.local`;
+  return openNaverDeepLink(deep, fallback);
+}
+
+// All ordinary Naver Map search links (including dynamically-rendered map pins)
+// now open the installed app first. The web page is only a fallback.
+document.addEventListener('click', (event) => {
+  const el = event.target.closest('a[href*="map.naver.com/p/search/"]');
+  if(el) openNaverSearch(event, el);
+});
 
 const ROUTES = {"d1":{"title":"抵達日｜仁川 T1 → 飯店 → 晚餐 → 換錢 → Olive Young → 飯店","points":[{"label":"1","name":"仁川機場第1航廈","lat":37.4602,"lng":126.4407,"time":"15:35","category":"other"},{"label":"2","name":"首爾站 A01 / 133","lat":37.5547,"lng":126.9707,"time":"轉乘","category":"other"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"約 18:00","category":"hotel"},{"label":"3","name":"陳玉華奶奶元祖一隻雞","lat":37.570374,"lng":127.00568,"time":"晚餐主選","category":"food"},{"label":"4","name":"Money Box 明洞本店","lat":37.56206676686479,"lng":126.98163611717736,"time":"晚餐後換錢","category":"other"},{"label":"5","name":"Olive Young 廣藏市場","lat":37.57,"lng":126.9995,"time":"換錢後","category":"shop"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"回飯店","category":"hotel"}],"groute":["Incheon International Airport Terminal 1","Seoul Station","Blueduck hotel Seoul","진옥화할매원조닭한마리","Money Box Myeongdong Main Branch","Olive Young Gwangjang Market","Blueduck hotel Seoul"]},"d2":{"title":"早餐 → 首爾林 → 聖水｜西往東走，避免折返","points":[{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"早上","category":"hotel"},{"label":"1","name":"Blue Duck Cafe","lat":37.57115,"lng":127.00585,"time":"早餐主選","category":"food"},{"label":"2","name":"首爾林 K211","lat":37.5437,"lng":127.0447,"time":"約 11:20","category":"other"},{"label":"3","name":"JUUNEEDU","lat":37.5467,"lng":127.0427,"time":"12:00","category":"shop"},{"label":"4","name":"Verish","lat":37.5425,"lng":127.0522,"time":"12:45","category":"shop"},{"label":"5","name":"無垢屋","lat":37.544,"lng":127.0565,"time":"午餐主選","category":"food"},{"label":"6","name":"STAND OIL","lat":37.5423,"lng":127.058,"time":"14:30","category":"shop"},{"label":"7","name":"Jojo Kalguksu","lat":37.5451,"lng":127.0538,"time":"晚餐主選","category":"food"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"回飯店","category":"hotel"}],"groute":["Blueduck hotel Seoul","Blueduck Cafe Seoul","Seoul Forest Station","JUUNEEDU Seoul Forest","Verish Seongsu","Muguok Seongsu","STAND OIL Seongsu","Jojo Kalguksu Seongsu","Blueduck hotel Seoul"]},"d3":{"title":"鐘路早餐 → 明洞 → 弘大｜一路往西","points":[{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"早上","category":"hotel"},{"label":"1","name":"JO & DAWSON","lat":37.5707,"lng":126.9829,"time":"早餐主選","category":"food"},{"label":"2","name":"Olive Young 明洞","lat":37.5638,"lng":126.985,"time":"10:00","category":"shop"},{"label":"3","name":"明洞餃子 本店","lat":37.5626,"lng":126.9857,"time":"午餐主選","category":"food"},{"label":"4","name":"弘大入口 239","lat":37.5563,"lng":126.9237,"time":"下午","category":"other"},{"label":"5","name":"給豚的男人","lat":37.5508,"lng":126.9206,"time":"晚餐主選","category":"food"},{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"回飯店","category":"hotel"}],"groute":["Blueduck hotel Seoul","JO & DAWSON Gwanghwamun","Olive Young Myeongdong Town","Myeongdong Kyoja Main Store","Hongik University Station","돈주는남자 본점","Blueduck hotel Seoul"]},"d4":{"title":"早餐 → 清潭醫美 → 鐘路晚餐 → 雲西","points":[{"label":"","name":"Blue Duck Hotel","lat":37.5713,"lng":127.006,"time":"07:30","category":"hotel"},{"label":"1","name":"Oasis Cheongdam","lat":37.525,"lng":127.0384,"time":"早餐主選","category":"food"},{"label":"2","name":"LUNN Clinic","lat":37.5259,"lng":127.0409,"time":"10:30","category":"other"},{"label":"3","name":"陳玉華奶奶元祖一隻雞","lat":37.570374,"lng":127.00568,"time":"晚餐主選","category":"food"},{"label":"4","name":"首爾站 A01","lat":37.5547,"lng":126.9707,"time":"轉 AREX","category":"other"},{"label":"","name":"雲西 A08／機場飯店","lat":37.4932,"lng":126.4935,"time":"約 20:00","category":"hotel"}],"groute":["Blueduck hotel Seoul","Oasis Cheongdam","LUNN Dermatology Cheongdam","진옥화할매원조닭한마리","Seoul Station","Incheon Airport Global Hotel & Suites Unseo"]},"d5":{"title":"雲西 → 仁川 T1 → 機場早餐","points":[{"label":"","name":"雲西 A08／機場飯店","lat":37.4932,"lng":126.4935,"time":"06:00","category":"hotel"},{"label":"1","name":"A10 仁川機場第1航廈","lat":37.4602,"lng":126.4407,"time":"約 06:20","category":"other"},{"label":"2","name":"Paris Baguette T1","lat":37.45995,"lng":126.44095,"time":"早餐主選","category":"food"}],"groute":["Unseo Station","Incheon International Airport Terminal 1"]}};
 const maps = {};

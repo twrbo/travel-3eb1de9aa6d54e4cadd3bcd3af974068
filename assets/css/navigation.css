@@ -1,0 +1,5 @@
+.topnav{padding:14px 5px;font-size:13px;color:#9aa4b2}.topnav a{color:inherit;text-decoration:none}
+.trip-switch{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.trip-switch a{display:block;padding:9px 16px;border:1px solid #34475a;border-radius:10px;background:#121e2a;color:#cbd8e7;text-decoration:none;font-size:14px;font-weight:750}
+.trip-switch a[aria-current=page]{background:#edf2f7;border-color:#edf2f7;color:#0b0e13}
+.trip-switch a:focus-visible{outline:2px solid #f2c94c;outline-offset:3px}

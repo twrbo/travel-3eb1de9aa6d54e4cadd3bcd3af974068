@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>找不到頁面｜Travel Index</title>
+</head>
+<body>
+  <h1>找不到這個頁面</h1>
+  <p>如果你使用的是舊行程網址，系統會自動帶你前往新頁面。</p>
+  <noscript><p>請啟用 JavaScript 以使用舊網址轉址。</p></noscript>
+  <script>
+    // Absolute URL also works when a host serves this page at a nested missing URL.
+    const path = location.pathname;
+    const legacy = path.match(/^(.*?)(?:\/tokyo(?:\/|$)|\/korea\/2026(?:\/|$))/);
+    const base = legacy ? legacy[1] : '';
+    const script = document.createElement('script');
+    script.src = base + '/assets/js/legacy-routes.js';
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

@@ -16,10 +16,12 @@ a{color:inherit}.shell{max-width:980px;margin:auto;padding:0 14px 70px}.topnav{p
 .section-title{margin:22px 2px 8px;font-size:17px}.checklist{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.check{padding:12px;border:1px solid var(--line);border-radius:13px;background:var(--panel);color:var(--soft);font-size:12px}.check span{display:inline-block;width:16px;height:16px;margin-right:7px;vertical-align:-4px;border:1px solid #526071;border-radius:4px}.foot{margin-top:24px;padding:14px 2px 0;border-top:1px solid var(--line);color:#7f8a99;font-size:11px}
 @media(max-width:600px){.summary{grid-template-columns:1fr 1fr}.summary .stat:last-child{grid-column:1/-1}.hero h1{font-size:25px}.checklist{grid-template-columns:1fr}.dayhead{align-items:flex-start;flex-direction:column}.dayhead p{text-align:left}}
 </style>
+<link rel="stylesheet" href="../travel.css">
 </head>
 <body>
 <main class="shell">
   <nav class="topnav"><a href="../../">Travel Index</a>　/　<a href="../">東京</a>　/　2026</nav>
+  <nav class="year-switch" aria-label="東京旅程年份"><a href="../2026/" aria-current="page">東京 2026</a><a href="../2027/">東京 2027</a></nav>
   <header class="hero">
     <p class="eyebrow">Japan / Tokyo · Itinerary draft</p>
     <h1>東京 9 日行程規劃</h1>
@@ -36,16 +38,25 @@ a{color:inherit}.shell{max-width:980px;margin:auto;padding:0 14px 70px}.topnav{p
   </nav>
   <section class="panel active" id="overview">
     <h2 class="section-title">旅程總覽</h2>
-    <article class="card">
-      <h3>去程｜酷航 TR874</h3>
-      <p>12/18（五）14:25 桃園 TPE 第 1 航廈 → 18:30 東京成田 NRT 第 1 航廈｜飛行約 3 小時 5 分</p>
-      <p>訂位代碼 [REMOVED]｜座位 8A、8B｜訂位確認列有 30 kg 托運行李</p>
-    </article>
-    <article class="card">
-      <h3>回程｜星宇航空 JX805</h3>
-      <p>12/26（六）20:10 東京成田 NRT 第 2 航廈 → 23:20 桃園 TPE 第 1 航廈｜飛行約 4 小時 10 分</p>
-      <p>訂位代碼 [REMOVED]｜座位 60K、60J｜每位旅客 2 件托運行李</p>
-    </article>
+    <h2 class="section-title">機票資訊</h2>
+    <div class="overview-flights"><article class="flight" aria-label="去程 酷航 TR874">
+      <div class="flight-top"><span class="flight-no">去程｜酷航 TR874</span><span class="flight-date">12/18（五）</span></div>
+      <div class="flight-route">
+        <div class="airport"><b>14:25 TPE</b><span>桃園國際機場</span><em class="terminal">第 1 航廈 T1</em></div>
+        <div class="plane" aria-hidden="true">→</div>
+        <div class="airport right"><b>18:30 NRT</b><span>東京成田國際機場</span><em class="terminal">第 1 航廈 T1</em></div>
+      </div>
+      <p class="flight-meta">飛行 3 小時 5 分｜訂位代碼 [REMOVED]<br>座位 8A、8B｜GUO ZHONGYI 名下托運行李 30 kg</p>
+    </article><article class="flight" aria-label="回程 星宇航空 JX805">
+      <div class="flight-top"><span class="flight-no">回程｜星宇航空 JX805</span><span class="flight-date">12/26（六）</span></div>
+      <div class="flight-route">
+        <div class="airport"><b>20:10 NRT</b><span>東京成田國際機場</span><em class="terminal">第 2 航廈 T2</em></div>
+        <div class="plane" aria-hidden="true">→</div>
+        <div class="airport right"><b>23:20 TPE</b><span>桃園國際機場</span><em class="terminal">第 1 航廈 T1</em></div>
+      </div>
+      <p class="flight-meta">飛行 4 小時 10 分｜訂位代碼 [REMOVED]<br>座位 60K、60J｜每位旅客托運行李 2 件</p>
+    </article></div>
+    <p class="flight-note">起降時間皆為機場當地時間；日本比台灣快 1 小時。</p>
     <article class="card">
       <h3>住宿｜KOKO HOTEL 赤羽駅前</h3>
       <p>12/18（五）入住 — 12/26（六）退房｜1 間小型雙人房（禁菸），2 位成人</p>
@@ -57,7 +68,15 @@ a{color:inherit}.shell{max-width:980px;margin:auto;padding:0 14px 70px}.topnav{p
   </section>
   <section class="panel" id="d1">
     <div class="dayhead"><h2>Day 1｜12 月 18 日（五）</h2><p>抵達東京</p></div>
-    <article class="card"><h3>去程｜酷航 TR874</h3><p>14:25 桃園 TPE 第 1 航廈起飛 → 18:30 成田 NRT 第 1 航廈抵達｜訂位代碼 [REMOVED]｜座位 8A、8B</p></article>
+    <article class="flight" aria-label="去程 酷航 TR874">
+      <div class="flight-top"><span class="flight-no">去程｜酷航 TR874</span><span class="flight-date">12/18（五）</span></div>
+      <div class="flight-route">
+        <div class="airport"><b>14:25 TPE</b><span>桃園國際機場</span><em class="terminal">第 1 航廈 T1</em></div>
+        <div class="plane" aria-hidden="true">→</div>
+        <div class="airport right"><b>18:30 NRT</b><span>東京成田國際機場</span><em class="terminal">第 1 航廈 T1</em></div>
+      </div>
+      <p class="flight-meta">飛行 3 小時 5 分｜訂位代碼 [REMOVED]<br>座位 8A、8B｜GUO ZHONGYI 名下托運行李 30 kg</p>
+    </article>
     <article class="card"><h3>住宿｜KOKO HOTEL 赤羽駅前</h3><p>入住日期：12/18｜地址：東京都北区赤羽西1-39-17</p></article>
     <article class="card"><div class="placeholder"><span class="placeholder-icon" aria-hidden="true">＋</span><div><strong>安排抵達後行程</strong><span>成田機場至赤羽的交通、晚餐與入住時間待補。</span></div></div></article>
   </section>
@@ -71,7 +90,15 @@ a{color:inherit}.shell{max-width:980px;margin:auto;padding:0 14px 70px}.topnav{p
   <section class="panel" id="d9">
     <div class="dayhead"><h2>Day 9｜12 月 26 日（六）</h2><p>退房・返程</p></div>
     <article class="card"><h3>住宿退房｜KOKO HOTEL 赤羽駅前</h3><p>退房日期：12/26｜退房時間與行李寄放方式待確認。</p></article>
-    <article class="card"><h3>回程｜星宇航空 JX805</h3><p>20:10 成田 NRT 第 2 航廈起飛 → 23:20 桃園 TPE 第 1 航廈抵達｜訂位代碼 [REMOVED]｜座位 60K、60J</p></article>
+    <article class="flight" aria-label="回程 星宇航空 JX805">
+      <div class="flight-top"><span class="flight-no">回程｜星宇航空 JX805</span><span class="flight-date">12/26（六）</span></div>
+      <div class="flight-route">
+        <div class="airport"><b>20:10 NRT</b><span>東京成田國際機場</span><em class="terminal">第 2 航廈 T2</em></div>
+        <div class="plane" aria-hidden="true">→</div>
+        <div class="airport right"><b>23:20 TPE</b><span>桃園國際機場</span><em class="terminal">第 1 航廈 T1</em></div>
+      </div>
+      <p class="flight-meta">飛行 4 小時 10 分｜訂位代碼 [REMOVED]<br>座位 60K、60J｜每位旅客托運行李 2 件</p>
+    </article>
     <article class="card"><div class="placeholder"><span class="placeholder-icon" aria-hidden="true">＋</span><div><strong>安排返程日</strong><span>最後活動、前往成田機場的交通與建議出發時間待補。</span></div></div></article>
   </section>
   <footer class="foot">Travel Index / Tokyo 2026 · 行程草稿</footer>
